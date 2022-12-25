@@ -10,9 +10,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-q@d#l$t7_v=ljj@01nhm*y6hv-b3(_+lb7tsdipakn9g77$lvx'
 
 ALLOWED_HOSTS = [
-    'http://127.0.0.1:8080',
     '127.0.0.1',
-    '0.0.0.0:80'
+    '0.0.0.0',
+    'freedom.com'
 ]
 
 INSTALLED_APPS = [

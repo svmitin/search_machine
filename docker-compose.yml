@@ -2,9 +2,9 @@ version: '3.9'
 
 services:
 
-  postgres:
+  sm_postgres:
     image: postgres:13
-    container_name: postgres
+    container_name: sm_postgres
     restart: unless-stopped
     volumes:
       - type: bind
@@ -22,9 +22,9 @@ services:
     ports:
       - 5432:5432
   
-  nginx:
+  sm_nginx:
     image: nginx:latest
-    container_name: nginx
+    container_name: sm_nginx
     restart: always
     networks:
       freedom_net:
@@ -37,11 +37,11 @@ services:
     ports:
       - 8080:8080
   
-  backend:
+  sm_backend:
     build:
       context: .
       dockerfile: ./Dockerfile
-    container_name: backend
+    container_name: sm_backend
     restart: unless-stopped
     volumes:
       - type: bind
@@ -54,20 +54,20 @@ services:
     command: python3 manage.py runserver 0.0.0.0:80
     environment:
       - FREEDOM_DEBUG=True
-      - FREEDOM_DB_HOST=postgres
+      - FREEDOM_DB_HOST=sm_postgres
       - FREEDOM_DB_NAME=freedom
       - FREEDOM_DB_USER=django
       - FREEDOM_DB_PASS=django
       - FREEDOM_DB_PORT=5432
     depends_on:
-      - postgres
-      - nginx
+      - sm_postgres
+      - sm_nginx
   
-  frontend:
+  sm_frontend:
     build:
       context: .
       dockerfile: ./Dockerfile
-    container_name: frontend
+    container_name: sm_frontend
     restart: unless-stopped
     volumes:
       - type: bind
@@ -84,13 +84,13 @@ services:
       - DB_USER=django
       - DB_PASS=django
     depends_on:
-      - nginx
+      - sm_backend
 
-  spyder_1:
+  sm_spyder_1:
     build:
       context: .
       dockerfile: ./Dockerfile
-    container_name: spyder
+    container_name: sm_spyder_1
     restart: unless-stopped
     volumes:
       - type: bind
@@ -102,19 +102,20 @@ services:
     working_dir: /app/spyder
     command: cat /dev/zero # python3 bot.py --start_url=https://ru.wikipedia.org/wiki/Заглавная_страница --spyder_name=spyder_1
     environment:
-      - DB_HOST=postgres
-      - DB_NAME=freedom
-      - DB_USER=django
-      - DB_PASS=django
+      - FREEDOM_DB_HOST=sm_postgres
+      - FREEDOM_DB_NAME=freedom
+      - FREEDOM_DB_USER=django
+      - FREEDOM_DB_PASS=django
+      - FREEDOM_DB_PORT=5432
     depends_on:
-      - postgres
-      - nginx
+      - sm_postgres
+      - sm_nginx
 
-  spyder_2:
+  sm_spyder_2:
     build:
       context: .
       dockerfile: ./Dockerfile
-    container_name: spyder
+    container_name: sm_spyder_2
     restart: unless-stopped
     volumes:
       - type: bind
@@ -124,21 +125,21 @@ services:
       freedom_net:
         ipv4_address: 172.16.238.7
     working_dir: /app/spyder
-    command: python3 bot.py --start_url=https://mail.ru --spyder_name=spyder_2
+    command: cat /dev/zero # python3 bot.py --start_url=https://mail.ru --spyder_name=spyder_2
     environment:
-      - DB_HOST=postgres
+      - DB_HOST=sm_postgres
       - DB_NAME=freedom
       - DB_USER=django
       - DB_PASS=django
     depends_on:
-      - postgres
-      - nginx
+      - sm_postgres
+      - sm_nginx
 
-  spyder_3:
+  sm_spyder_3:
     build:
       context: .
       dockerfile: ./Dockerfile
-    container_name: spyder
+    container_name: sm_spyder_3
     restart: unless-stopped
     volumes:
       - type: bind
@@ -148,15 +149,15 @@ services:
       freedom_net:
         ipv4_address: 172.16.238.8
     working_dir: /app/spyder
-    command: python3 bot.py --start_url=https://petrosian.ru --spyder_name=spyder_2
+    command: python3 bot.py --start_url=https://petrosian.ru --spyder_name=spyder_3
     environment:
-      - DB_HOST=postgres
+      - DB_HOST=sm_postgres
       - DB_NAME=freedom
       - DB_USER=django
       - DB_PASS=django
     depends_on:
-      - postgres
-      - nginx
+      - sm_postgres
+      - sm_nginx
 
 volumes:
   postgres-data:
