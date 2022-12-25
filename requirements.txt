@@ -1,0 +1,11 @@
+Django
+psycopg2-binary
+gunicorn
+pytest
+pytest-django
+PyYAML
+flower
+tzdata
+requests
+bs4
+sqlalchemy
