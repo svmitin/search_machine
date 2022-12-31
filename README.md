@@ -1,7 +1,8 @@
 ### Starts with Docker
 ```
-docker-compose build backend
-docker-compose up -d
+make configure
+make run_backend
+make run_spyders
 ```
 
 ## License
