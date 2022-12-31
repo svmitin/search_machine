@@ -17,8 +17,6 @@ from constants import *
 from helpers import validate_word
 
 
-
-
 class Spyder:
     name = ''
 
@@ -134,7 +132,10 @@ class Spyder:
     def make_page_index(self, page: Page, page_content: str) -> None:
         """Indexing all words in page"""
         # конкатенируем все слова страницы, валидируем символы, преобразуем в список
-        all_page_words = f'{page.title} {page.description} {page.keywords} {page_content}'.lower().split()
+        all_page_text = f'{page.title} {page.description} {page.keywords} {page_content}'.lower()
+        for symbol in PUNCTUATION_SYMBOLS:
+            all_page_text = all_page_text.replace(symbol, '')
+        all_page_words = all_page_text.split()
         words = filter(validate_word, set(all_page_words))
         words_ids = []
 
@@ -145,8 +146,6 @@ class Spyder:
             if not saved_word:
                 saved_word = Word(word=word)
                 saved_word.add()
-                if not saved_word.id:
-                    exit() # TODO: давно не актуально, удали если не крашит при почти пустой базе
             words_ids.append(saved_word.id)
 
         # добавляем страницу в индекс
@@ -165,7 +164,8 @@ class Spyder:
             print(f'ERROR: {error}')
             return None
         
-        if not title or not description or not keywords:
+        if not title and not description and not keywords:
+            print('not title or not description or not keywords')
             return None
 
         # Сохранение базовой информации о странице: URL, описание, ключевые слова

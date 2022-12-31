@@ -39,4 +39,4 @@ docker-compose up -d
 BSD 2-Clause License
 
 ## Project status
-Passive
+Active

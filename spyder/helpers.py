@@ -2,11 +2,7 @@
 from constants import *
 
 
-def validate_word(word: str):
-    # в слово могут попасть знаки препинания
-    for symbol in PUNCTUATION_SYMBOLS:
-        word = word.replace(symbol, '')
-
+def validate_word(word: str) -> bool:
     if len(word) < 3:           # сразу нахуй
         return False
     
