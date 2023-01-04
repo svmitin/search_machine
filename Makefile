@@ -49,6 +49,13 @@ migrate:
 	docker-compose exec sm_backend python3 manage.py makemigrations
 	docker-compose exec sm_backend python3 manage.py migrate
 
+backup:
+	docker-compose up -d sm_backend
+	-docker stop sm_spyder_1
+	-docker stop sm_spyder_2
+	-docker stop sm_spyder_3
+	docker-compose exec sm_postgres pg_dump -U user machine > dump.sql
+
 admin:
 	docker-compose up -d sm_backend
 	docker-compose exec sm_backend python3 manage.py createsuperuser

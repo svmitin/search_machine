@@ -120,3 +120,6 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+
+# Project files
+dump.sql
