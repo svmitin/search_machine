@@ -29,7 +29,6 @@ class Search(View):
     @staticmethod
     def get(request) -> JsonResponse:
         """Отвечает за ебучий поиск"""
-        EMPTY = JsonResponse({'pages': []}, status=200)
 
         # полнотекстовый поиск
         # 1) разбиваем текстовый запрос на отдельные слова
@@ -45,7 +44,7 @@ class Search(View):
             words_ids.append(word.id)
         
         if not words_ids:
-            return EMPTY
+            return JsonResponse({'pages': []}, status=200)
         
         found_pages = WordsInPages.objects.filter(words__contains=[words_ids]).all()
         return JsonResponse({
