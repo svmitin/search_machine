@@ -26,9 +26,34 @@ class Statistics(View):
 
 class Search(View):
 
+    @staticmethod
     def get(request) -> JsonResponse:
         """Отвечает за ебучий поиск"""
-        search_query = ''.split()
-        pages = []
+        EMPTY = JsonResponse({'pages': []}, status=200)
+
+        # полнотекстовый поиск
+        # 1) разбиваем текстовый запрос на отдельные слова
+        # 2) находим id каждого слова
+        # 3) извлекаем из WordsInPages все страницы на которых есть все эти слова
+        # 4) извлекаем из Page информацию о данных страницах для возврата пользователю
+        search_query = request.GET.get('query', '').split()
+        words_ids = []
         for word in search_query:
-            pass
+            word = Word.objects.filter(word=word.lower()).first()
+            if not word:
+                continue
+            words_ids.append(word.id)
+        
+        if not words_ids:
+            return EMPTY
+        
+        found_pages = WordsInPages.objects.filter(words__contains=[words_ids]).all()
+        return JsonResponse({
+            'pages': [
+                {
+                    'url': found_page.page.url,
+                    'title': found_page.page.title,
+                    'description': found_page.page.description,
+                } for found_page in found_pages
+            ]
+        }, status=200)
