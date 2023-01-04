@@ -25,7 +25,7 @@ class Spyder:
 
     def normalyze_link(self, link: str, parent: str) -> str or None:
         """Получает URL ссылки, URL её владельца, возвращает нормализованную глобальную ссылку"""
-        if not link:
+        if not link or not parent:
             return None
         
         link = link.lower().lstrip('//')

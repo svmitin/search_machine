@@ -8,7 +8,7 @@ DB_PASS = os.environ.get('DB_PASS')
 DB_PORT = int(os.environ.get('DB_PORT'))
 
 ACCEPTED_ZONES = ('ru',)
-DOMAIN_BLACKLIST = ('google.com', 'google.ru', 'vk.com', 'mail.ru', 'yandex.com', 'facebook.com', 'twitter.com', 'telegram.com', 'mail.ru', 'ok.ru', 'dzen.ru')
+DOMAIN_BLACKLIST = ('google.com', 'google.ru', 'vk.com', 'yandex.com', 'facebook.com', 'twitter.com', 'telegram.com', 'ok.ru', 'dzen.ru')
 
 ACCEPTED_SYMBOLS = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя'
 PUNCTUATION_SYMBOLS = ',.?!:;\'"`'
