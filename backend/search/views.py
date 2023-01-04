@@ -9,25 +9,25 @@ from django.core.paginator import Paginator
 from django.db import connection
 from django.db.models import Max
 
+from .models import Word, Page, WordsInPages, Link
 
-class Weather(View):
-    """Json template for debug"""
+
+class Statistics(View):
 
     @staticmethod
     def get(request) -> JsonResponse:
-        """get json-responseg"""
+        """Возвращает статистику"""
         return JsonResponse({
-            "id": 1,
-            "location": "London",
-            "abbr": "s",
-            "time": "07:15 pm",
-            "temp": 59
+            'Words': Word.objects.count(),
+            'Pages': Page.objects.count(),
+            'WordsInPages': WordsInPages.objects.count(),
+            'Links': Link.objects.count()
           }, status=200)
 
 class Search(View):
-    """Отвечает за ебучий поиск"""
 
     def get(request) -> JsonResponse:
+        """Отвечает за ебучий поиск"""
         search_query = ''.split()
         pages = []
         for word in search_query:
