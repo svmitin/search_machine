@@ -49,6 +49,7 @@ class WordsInPages(models.Model):
     words = ArrayField(ArrayField(models.IntegerField()))
     page = models.ForeignKey(Page, verbose_name='Страница', on_delete=models.CASCADE)
     created = models.DateTimeField(verbose_name='Запись создана', default=timezone.now)
+    # TODO: как быть с переиндексацией страниц?
 
     def __str__(self):
         return f'Слова страницы #{self.page.id}:{self.page.title[:25]}'
@@ -83,3 +84,51 @@ class Link(models.Model):
         ordering = ['url']
         verbose_name = 'Ссылка'
         verbose_name_plural = 'Ссылки'
+
+
+class Domain(models.Model):
+    """Домены"""
+    url = models.TextField(verbose_name='Domain URL', blank=False, null=False, unique=True)
+    created = models.DateTimeField(verbose_name='Запись создана', default=timezone.now)
+
+    def __str__(self):
+        return f'Домен #{self.id}:{self.url}'
+    
+    class Meta:
+        db_table = "search_domains"
+        ordering = ['url']
+        verbose_name = 'Домен'
+        verbose_name_plural = 'Все известные домены'
+
+
+class DomainsQueue(models.Model):
+    """Очередь доменов на индексацию"""
+    url = models.TextField(verbose_name='Domain URL', blank=False, null=False, unique=True)
+    visited = models.BooleanField(verbose_name='Посещался', default=False)
+    spyder_name = models.TextField(verbose_name='Имя паука', blank=True, default=None)
+    created = models.DateTimeField(verbose_name='Запись создана', default=timezone.now)
+
+    def __str__(self):
+        return f'Домен #{self.id}:{self.url}'
+    
+    class Meta:
+        db_table = "search_domains_queue"
+        ordering = ['url']
+        verbose_name = 'Домен'
+        verbose_name_plural = 'Очередь на индексацию'
+
+
+class SearchQuery(models.Model):
+    """Поисковые запросы"""
+    query = models.TextField(verbose_name='Search query', blank=False, null=False, unique=True)
+    page = models.ForeignKey(Page, verbose_name='Страница', on_delete=models.CASCADE, blank=True, null=True)
+    created = models.DateTimeField(verbose_name='Запись создана', default=timezone.now)
+
+    def __str__(self):
+        return f'Поисковой запрос #{self.id}:{self.query}'
+    
+    class Meta:
+        db_table = "search_query"
+        ordering = ['query']
+        verbose_name = 'Поисковой запрос'
+        verbose_name_plural = 'Поисковые запросы'

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Internet spyder bot"""
+import random
 import sys
 import requests
 from requests.exceptions import ConnectionError, MissingSchema, InvalidSchema
@@ -12,7 +13,7 @@ from sqlalchemy.exc import IntegrityError, PendingRollbackError
 from psycopg2.errors import UniqueViolation
 
 from dbase import DBSession
-from dbase import Word, Page, WordsInPages, Link
+from dbase import Word, Page, WordsInPages, Link, Domain, DomainsQueue
 from constants import *
 from helpers import validate_word
 
@@ -41,18 +42,6 @@ class Spyder:
         if not scheme or not domain:
             # на случай не полной ссылки вроде /about и т.п.
             link = f'{urlparse(parent).scheme}://{urlparse(parent).netloc}/{link.lstrip("/")}'
-        
-        # Проверка доменной зоны. Ходим только в .RU
-        try:
-            zone = urlparse(link).netloc.split('.')[-1]
-        except KeyError:
-            return None
-        if zone not in ACCEPTED_ZONES:
-            return None
-
-        # Домен не должен быть включен в черный список
-        if urlparse(link).netloc in DOMAIN_BLACKLIST:
-            return None
         return link
 
     def link_type(self, link: str) -> str:
@@ -124,7 +113,7 @@ class Spyder:
             page_text = ''
             divs = soup.find_all('div')
             for div in divs:
-                page_text += div.get_text()
+                page_text += f'{div.get_text(sep=" ")} '
             return page_text
         except (TypeError, TypeError, AttributeError):
             return ''
@@ -134,7 +123,7 @@ class Spyder:
         # конкатенируем все слова страницы, валидируем символы, преобразуем в список
         all_page_text = f'{page.title} {page.description} {page.keywords} {page_content}'.lower()
         for symbol in PUNCTUATION_SYMBOLS:
-            all_page_text = all_page_text.replace(symbol, '')
+            all_page_text = all_page_text.replace(symbol, ' ')
         all_page_words = all_page_text.split()
         words = filter(validate_word, set(all_page_words))
         words_ids = []
@@ -191,17 +180,36 @@ class Spyder:
             if not url:
                 continue
             link = Link(url=url,
-                        text=a.text.strip(),
+                        text=a.text.strip().lower(),
                         page=self.normalyze_link(link=page.url, parent=page.url),
                         created=datetime.utcnow().isoformat(),
                         spyder_name=self.name,
-                        debug=a.get('href') # сохраняем в дебаг ссылку в инзначальном виде
+                        debug=a.get('href') # сохраняем в дебаг ссылку в изначальном виде
             )
             link.add()
+        
+        # save domain
+        domain_url = f'{urlparse(url).scheme}://{urlparse(url).netloc}'
+        domain = DBSession.query(Domain).filter_by(url=domain_url).first()
+        if not domain:
+            domain = Domain(url=domain_url)
+            domain.add()
 
     def start(self, start_url: str):
         link = Link(url=start_url) if start_url else self.open_new_url()
         while link:
+            # Проверка доменной зоны. Ходим только в .RU
+            try:
+                zone = urlparse(link.url).netloc.split('.')[-1]
+            except KeyError:
+                continue
+            if zone not in ACCEPTED_ZONES:
+                continue
+
+            # Домен не должен быть включен в черный список
+            if urlparse(link.url).netloc in DOMAIN_BLACKLIST:
+                continue
+                
             self.parse_page(url=link.url)
             link = self.open_new_url()
         print('Очередь URL пуста')
@@ -212,6 +220,16 @@ class Spyder:
 def run(start_url, spyder_name):
     spyder = Spyder(name=spyder_name)
     spyder.start(start_url=start_url)
+    # Бесконечный режим
+    while True:
+        domains = DBSession.query(DomainsQueue).filter_by(visited=False).first()
+        if not domains:
+            return
+        domain = random.choice([domain for domain in domains])
+        domain.visited = True
+        domain.spyder_name = spyder.name
+        domain.save()
+        spyder.start(start_url=domain.url)
 
 
 if __name__ == '__main__':

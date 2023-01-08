@@ -39,10 +39,18 @@ down:
 run_backend:
 	docker-compose up -d sm_backend
 
+stop_backend:
+	docker-compose stop sm_backend
+
 run_spyders:
 	docker-compose up -d sm_spyder_1
 	docker-compose up -d sm_spyder_2
 	docker-compose up -d sm_spyder_3
+
+stop_spyders:
+	docker-compose stop sm_spyder_1
+	docker-compose stop sm_spyder_2
+	docker-compose stop sm_spyder_3
 
 migrate:
 	docker-compose up -d sm_backend

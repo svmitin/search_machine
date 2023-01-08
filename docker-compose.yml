@@ -100,7 +100,7 @@ services:
       freedom_net:
         ipv4_address: 172.16.110.6
     working_dir: /app/spyder
-    command: python3 bot.py --start_url=https://mail.ru --spyder_name=spyder_1
+    command: python3 bot.py --start_url=https://slovardalja.net --spyder_name=spyder_1
     environment:
       - DB_HOST=sm_postgres
       - DB_NAME=machine
@@ -124,7 +124,7 @@ services:
       freedom_net:
         ipv4_address: 172.16.110.7
     working_dir: /app/spyder
-    command: python3 bot.py --start_url=https://ru.wikipedia.org/wiki/Заглавная_страница --spyder_name=spyder_2
+    command: python3 bot.py --start_url=https://wooordhunt.ru/dic/content/ru_en --spyder_name=spyder_2
     environment:
       - DB_HOST=sm_postgres
       - DB_NAME=machine
@@ -148,7 +148,7 @@ services:
       freedom_net:
         ipv4_address: 172.16.110.8
     working_dir: /app/spyder
-    command: python3 bot.py --start_url=https://petrosian.ru --spyder_name=spyder_3
+    command: python3 bot.py --start_url=https://mail.ru --spyder_name=spyder_3
     environment:
       - DB_HOST=sm_postgres
       - DB_NAME=machine

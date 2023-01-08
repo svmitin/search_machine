@@ -48,6 +48,7 @@ class Word(Mixin, Base):
     def __repr__(self):
         return self.word
 
+
 class Page(Mixin, Base):
     __tablename__ = 'search_pages'
 
@@ -63,6 +64,7 @@ class Page(Mixin, Base):
     def __repr__(self):
         return self.url
 
+
 class WordsInPages(Mixin, Base):
     __tablename__ = 'search_words_in_pages'
 
@@ -74,8 +76,8 @@ class WordsInPages(Mixin, Base):
     def __repr__(self):
         return self.word
 
+
 class Link(Mixin, Base):
-    """Initialize profiles table"""
     __tablename__ = 'search_links'
 
     id = Column(Integer, nullable=False, primary_key=True)
@@ -89,3 +91,27 @@ class Link(Mixin, Base):
 
     def __repr__(self):
         return f'{self.url} {self.text} {self.page}'
+
+
+class Domain(Mixin, Base):
+    __tablename__ = 'search_domains'
+
+    id = Column(Integer, nullable=False, primary_key=True)
+    url = Column(Text(), nullable=False, unique=True)
+    created = Column(TIMESTAMP(timezone=True), default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'{self.url}'
+
+
+class DomainsQueue(Mixin, Base):
+    __tablename__ = 'search_domains_queue'
+
+    id = Column(Integer, nullable=False, primary_key=True)
+    url = Column(Text(), nullable=False, unique=True)
+    visited = Column(Boolean, default=False)
+    spyder_name = Column(Text(), nullable=True, default=None)
+    created = Column(TIMESTAMP(timezone=True), default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'{self.url}'
