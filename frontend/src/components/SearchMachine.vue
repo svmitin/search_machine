@@ -12,17 +12,18 @@
 export default {
   name: 'SearchMachine',
   data() {
-    return {sitename: 'Freedom Search Machine',
-            search_text: 'IKEA Омск',
-            search_response: {"id": 1000, "location": "London"}
-            }
+    return {
+      sitename: 'Freedom Search Machine',
+      search_text: 'IKEA Омск',
+      search_response: {"id": 1000, "location": "London"}
+    }
   },
   props: {
     msg: String
   },
   methods: {
     getResult() {
-      fetch('http://freedom:8000/search?query=' + this.search_text)
+      fetch('http://api.freedom:8000/search?query=' + this.search_text)
       .then(response => response.json())
       .then(data => (console.log(data)));
       },

@@ -41,6 +41,7 @@ run_backend:
 
 stop_backend:
 	docker-compose stop sm_backend
+	docker-compose stop sm_frontend
 
 run_spyders:
 	docker-compose up -d sm_spyder_1
