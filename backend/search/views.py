@@ -90,7 +90,7 @@ class Search(View):
 
     @staticmethod
     def get(request) -> JsonResponse:
-        """Отвечает за ебучий поиск"""
+        """Отвечает за поиск"""
         query = request.GET.get('query', '').lower().strip()
 
         # сохраним запрос в историю

@@ -1,6 +1,6 @@
 ### Starts with Docker
 ```
-make configure
+make install
 make run_backend
 make run_spyders
 ```

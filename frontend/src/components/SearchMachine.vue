@@ -13,7 +13,7 @@ export default {
   name: 'SearchMachine',
   data() {
     return {sitename: 'Freedom Search Machine',
-            search_text: 'IKEA',
+            search_text: 'IKEA Омск',
             search_response: {"id": 1000, "location": "London"}
             }
   },
@@ -22,10 +22,9 @@ export default {
   },
   methods: {
     getResult() {
-      console.log(this.search_response);
-      fetch("http://127.0.0.1:8000/weather.json")
+      fetch('http://freedom:8000/search?query=' + this.search_text)
       .then(response => response.json())
-      .then(data => (this.search_response = data));
+      .then(data => (console.log(data)));
       },
   }
 }
@@ -46,5 +45,10 @@ li {
 }
 a {
   color: #42b983;
+}
+.SearchMachine {
+  margin-left: auto;
+  margin-right: auto;
+  width: 800px;
 }
 </style>
