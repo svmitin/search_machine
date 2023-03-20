@@ -12,6 +12,7 @@ SECRET_KEY = 'django-insecure-q@d#l$t7_v=ljj@01nhm*y6hv-b3(_+lb7tsdipakn9g77$lvx
 ALLOWED_HOSTS = [
     '127.0.0.1',
     '0.0.0.0',
+    'freedom',
     'api.freedom',
 ]
 CSRF_TRUSTED_ORIGINS = ['http://freedom:8000']

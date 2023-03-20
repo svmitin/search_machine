@@ -26,7 +26,7 @@ export default {
       fetch('http://api.freedom:8000/search?query=' + this.search_text)
       .then(response => response.json())
       .then(data => (console.log(data)));
-      },
+    },
   }
 }
 </script>
