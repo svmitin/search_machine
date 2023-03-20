@@ -1,33 +1,44 @@
-<template>
-  <head>
-    <meta charset="UTF-8">
-    <title>Freedom search</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link rel="icon" type="image/png" href="./assets/favicon.png">
-  </head>
-  <body>
-    <SearchMachine msg="Welcome to Your Vue.js App"/>
-  </body>
+<template lang="pug">
+    #app
+        keep-alive(:include="['Sites']")
+            router-view
 </template>
 
 <script>
-import SearchMachine from './components/SearchMachine.vue'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
-  name: 'App',
-  components: {
-    SearchMachine
-  }
+    computed: {
+        ...mapGetters('Publisher', ['isAuthorized']),
+    },
+    methods: {
+        ...mapActions('Publisher', ['logout', 'getPubInfo']),
+        ...mapActions('Refbooks', ['fetchRefbooks']),
+        ...mapActions('Sites', ['fetchSites']),
+        ...mapActions('Statistics', ['getIncomeByPeriod']),
+    },
+    watch: {
+        isAuthorized(newVal) {
+            if (newVal) {
+                this.getPubInfo()
+                this.fetchRefbooks()
+                this.fetchSites({
+                    lastSiteId: 0,
+                    status: '',
+                    url: '',
+                })
+                this.getIncomeByPeriod()
+            }
+        },
+    },
 }
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+<style lang="stylus">
+
+#app
+    font-family 'Open Sans', Avenir, Helvetica, Arial, sans-serif
+    -webkit-font-smoothing antialiased
+    -moz-osx-font-smoothing grayscale
+    background-color #e7ebee
 </style>

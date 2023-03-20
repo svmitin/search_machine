@@ -3,4 +3,5 @@ set -x #echo on
 
 cd /app/frontend
 npm install
+npm install --save vuex
 npm run build
