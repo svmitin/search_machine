@@ -5,14 +5,10 @@ import SearchMachine from './components/SearchMachine.vue'
 
 <template>
   <header>
-    <RouterLink to="/"><img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" /></RouterLink>
+    <RouterLink to="/"><img alt="Vue logo" class="logo" src="@/assets/logo.png" width="125" height="125" /></RouterLink>
 
     <div class="wrapper">
       <SearchMachine search_text="IKEA Омск" />
-
-      <nav>
-        <RouterLink to="/query">SearchResponse</RouterLink>
-      </nav>
     </div>
   </header>
 
