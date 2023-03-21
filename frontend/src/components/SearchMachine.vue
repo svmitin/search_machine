@@ -1,20 +1,17 @@
 <script setup>
 defineProps({
-  msg: {
+  search_text: {
     type: String,
-    required: true
+    required: false
   }
 })
 </script>
 
 <template>
   <div class="greetings">
-    <h1 class="green">{{ msg }}</h1>
-    <h3>
-      You’ve successfully created a project with
-      <a href="https://vitejs.dev/" target="_blank" rel="noopener">Vite</a> +
-      <a href="https://vuejs.org/" target="_blank" rel="noopener">Vue 3</a>.
-    </h3>
+    <h1 class="green">{{ search_text }}</h1>
+    <h3>Введи поисковой запрос</h3>
+    <input><button class="btn btn-primary">Найти!</button>
   </div>
 </template>
 
