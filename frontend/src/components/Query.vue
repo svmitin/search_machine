@@ -4,20 +4,23 @@ import { RouterLink, RouterView } from 'vue-router'
 
 
 const props = defineProps({
+  message: {
+    type: String,
+    required: true
+  },
   search_text: {
     type: String,
     required: true
-  }
+  },
 })
 const query = ref(props.search_text)
 </script>
 
 <template>
   <div>
-    <h3>Введи поисковой запрос</h3>
+    <h3>{{ message }}</h3>
     <input v-model="query">
     <button @click="$router.push({ name: 'search-response', params: {query: query} })">Найти!</button>
-    <p>Поисковой запрос: {{ query }}</p>
   </div>
 </template>
 

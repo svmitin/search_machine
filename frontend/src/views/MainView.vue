@@ -8,6 +8,9 @@ const query = ref("IKEA Омск")
 
 <template>
     <div class="wrapper">
-      <Query :search_text="query" />
+      <Query 
+        message="Введи поисковой запрос" 
+        :search_text="query" 
+      />
     </div>
 </template>

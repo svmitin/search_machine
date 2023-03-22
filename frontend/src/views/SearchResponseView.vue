@@ -31,7 +31,10 @@ const search_response = ref([
 
 <template>
     <div class="wrapper">
-      <Query :search_text="query" />
+      <Query 
+        message="Просмотр результатов" 
+        :search_text="query" 
+      />
       <RouterLink to="/">back</RouterLink>
       
       <Response 
