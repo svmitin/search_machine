@@ -19,7 +19,7 @@ const query = ref(props.search_text)
 <template>
   <div>
     <h3>{{ message }}</h3>
-    <input v-model="query">
+    <input v-model="query" @keyup.enter="$router.push({ name: 'search-response', params: {query: query} })">
     <button @click="$router.push({ name: 'search-response', params: {query: query} })">Найти!</button>
   </div>
 </template>
