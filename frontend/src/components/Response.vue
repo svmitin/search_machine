@@ -1,5 +1,7 @@
 <script setup>
 import { ref } from 'vue'
+import { RouterLink } from 'vue-router'
+import Link from '../components/Link.vue'
 
 const props = defineProps({
   url: String,
@@ -8,16 +10,14 @@ const props = defineProps({
   indexed: String,
   found_with: String
 })
-
 </script>
 
 <template>
   <div>
     <br>
-    <h3><a href="{{ url }}">{{ title }}</a></h3>
+    <h3><Link :url=url :title=title /></h3>
     <p><i>{{ description }}</i></p>
     <p>{{ found_with }}</p>
-    <hr>
   </div>
 </template>
 
