@@ -1,55 +1,17 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
-import SearchMachine from './components/SearchMachine.vue'
+import MainView from './views/MainView.vue'
 </script>
 
 <template>
-  <header>
-    <RouterLink to="/"><img alt="Vue logo" class="logo" src="@/assets/logo.png" width="125" height="125" /></RouterLink>
-
-    <div class="wrapper">
-      <SearchMachine search_text="IKEA Омск" />
-    </div>
-  </header>
-
   <RouterView />
+
+  <br><br><br>
+  <hr width="250px">
+  Sergey Mitin © 2023
 </template>
 
 <style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
 
 @media (min-width: 1024px) {
   header {

@@ -40,7 +40,7 @@ class Search(View):
                 'title': found_page.page.title,
                 'description': found_page.page.description,
                 'indexed': found_page.page.created,
-                'found with': 'ready answer search'
+                'found_with': 'ready answer search'
             } for found_page in search_query
         ]
 
@@ -55,7 +55,7 @@ class Search(View):
                 'title': found_page.title,
                 'description': found_page.description,
                 'indexed': found_page.created,
-                'found with': 'links search'
+                'found_with': 'links search'
             } for found_page in found_pages
         ]
 
@@ -84,7 +84,7 @@ class Search(View):
                 'title': found_page.page.title,
                 'description': found_page.page.description,
                 'indexed': found_page.page.created,
-                'found with': 'full text search'
+                'found_with': 'full text search'
             } for found_page in found_pages
         ]
 
