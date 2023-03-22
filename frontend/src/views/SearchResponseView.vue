@@ -4,8 +4,6 @@ import { RouterLink, RouterView } from 'vue-router'
 import Query from '../components/Query.vue'
 import Response from '../components/Response.vue'
 
-// console.log(route.params)
-// const search_text = ref('IKEA Омск')
 const props = defineProps({
   search_text: {
     type: String,
@@ -29,8 +27,6 @@ const search_response = ref([
     "found_with": "full text search"
   }
 ])
-
-
 </script>
 
 <template>

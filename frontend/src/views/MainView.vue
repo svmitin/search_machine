@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { RouterLink, RouterView } from 'vue-router'
 import Query from '../components/Query.vue'
 
-const query = ref("IKEA")
+const query = ref("IKEA Омск")
 </script>
 
 <template>
