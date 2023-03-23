@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, OnMount } from 'vue'
 import { useFetch } from '@vueuse/core'
 import { RouterLink } from 'vue-router'
 import Query from '../components/Query.vue'
@@ -13,13 +13,12 @@ const props = defineProps({
 })
 
 const query = ref(props.search_text)
-// TODO: how use await
 const { data } = useFetch('http://api.freedom:8000/search?query='+props.search_text).get().json()
 const search_response = data
 </script>
 
 <template>
-    <div class="wrapper">
+    <div class="wrapper" v-if="search_response && search_response.pages">
       <Query 
         message="Просмотр результатов" 
         :search_text="query" 
