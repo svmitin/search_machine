@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.urls import path
 
 from freedom import settings
-from search.views import Statistics, Search
+from search.views import Statistics, StartedQuery, Search
 
 
 admin.autodiscover()
@@ -13,5 +13,6 @@ admin.site.enable_nav_sidebar = False
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', Statistics.as_view(), name='statistics'),
+    path('started_query', StartedQuery.as_view(), name='started_query'),
     path('search', Search.as_view(), name='search'),
 ]

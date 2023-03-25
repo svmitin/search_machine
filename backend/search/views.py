@@ -1,4 +1,5 @@
 from datetime import datetime
+from random import choice
 
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -28,6 +29,16 @@ class Statistics(View):
             'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
           }, status=200)
 
+class StartedQuery(View):
+
+    @staticmethod
+    def get(request) -> JsonResponse:
+        """Возвращает запрос по умолчанию"""
+        word = choice([word.word for word in Word.objects.all()])
+        return JsonResponse({
+            'query': word
+          }, status=200)
+
 class Search(View):
 
     @staticmethod
@@ -40,7 +51,7 @@ class Search(View):
                 'title': found_page.page.title,
                 'description': found_page.page.description,
                 'indexed': found_page.page.created,
-                'found with': 'ready answer search'
+                'found_with': 'ready answer search'
             } for found_page in search_query
         ]
 
@@ -55,7 +66,7 @@ class Search(View):
                 'title': found_page.title,
                 'description': found_page.description,
                 'indexed': found_page.created,
-                'found with': 'links search'
+                'found_with': 'links search'
             } for found_page in found_pages
         ]
 
@@ -84,7 +95,7 @@ class Search(View):
                 'title': found_page.page.title,
                 'description': found_page.page.description,
                 'indexed': found_page.page.created,
-                'found with': 'full text search'
+                'found_with': 'full text search'
             } for found_page in found_pages
         ]
 
