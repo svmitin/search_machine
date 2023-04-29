@@ -9,8 +9,6 @@ from urllib.parse import urlparse
 import click
 from bs4 import BeautifulSoup
 from datetime import datetime
-from sqlalchemy.exc import IntegrityError, PendingRollbackError
-from psycopg2.errors import UniqueViolation
 
 from dbase import DBSession
 from dbase import Word, Page, WordsInPages, Link, Domain, DomainsQueue

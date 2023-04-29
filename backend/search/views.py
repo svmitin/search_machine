@@ -108,7 +108,7 @@ class Search(View):
         search_query = SearchQuery.objects.filter(query=query).first()
         if not search_query:
             search_query = SearchQuery(query=query)
-            search_query.save()
+        search_query.save()
 
         ready_answer_search_results = Search.ready_answer_search(query = query)
         links_search_results = Search.links_search(query = query)
