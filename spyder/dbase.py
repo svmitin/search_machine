@@ -6,7 +6,7 @@ from datetime import datetime
 import sqlalchemy
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine, MetaData
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, relation
 from sqlalchemy import types, Column, ForeignKey, Integer, String, Text, DateTime, Boolean
 from sqlalchemy.dialects import postgresql as dtypes
 from sqlalchemy.dialects.postgresql import UUID, TIMESTAMP
@@ -37,6 +37,33 @@ class Mixin():
 
 
 # Описание таблиц
+class SiteCategory(Mixin, Base):
+    """Тематика сайта"""
+    __tablename__ = 'search_site_categories'
+
+    id = Column(Integer, nullable=False, primary_key=True)
+    category = Column(Text(), nullable=False, unique=True)
+
+    def __repr__(self):
+        return f'{self.category}'
+
+
+class Site(Mixin, Base):
+    """Домены. Для будущей аналитики и другого функционала будем сохранять все известные нам доменые имена"""
+    __tablename__ = 'search_sites'
+
+    id = Column(Integer, nullable=False, primary_key=True)
+    url = Column(Text(), nullable=False, unique=True)
+    category_id = Column(types.Integer, ForeignKey('search_site_categories.id', ondelete='SET NULL'), nullable = True, comment = 'Категория сайта')
+    integration_hash = Column(Text(), nullable=False, unique=True)
+    created = Column(TIMESTAMP(timezone=True), default=datetime.utcnow)
+
+    category = relation('SiteCategory', foreign_keys = [category_id])
+
+    def __repr__(self):
+        return f'{self.url}'
+
+
 class Word(Mixin, Base):
     """Initialize words table"""
     __tablename__ = 'search_words'
@@ -53,6 +80,7 @@ class Page(Mixin, Base):
     __tablename__ = 'search_pages'
 
     id = Column(Integer, nullable=False, primary_key=True)
+    site_id = Column(types.Integer, ForeignKey('search_sites.id', ondelete='SET NULL'), nullable = True, comment = 'Сайт страницы')
     url = Column(Text(), nullable=False, unique=True)
     title = Column(Text())
     description = Column(Text())
@@ -60,6 +88,8 @@ class Page(Mixin, Base):
     status_code = Column(Integer(), default=500)
     created = Column(TIMESTAMP(timezone=True), default=datetime.utcnow)
     updated = Column(TIMESTAMP(timezone=True), default=datetime.utcnow)
+
+    site = relation('Site', foreign_keys = [site_id])
 
     def __repr__(self):
         return self.url
@@ -93,18 +123,7 @@ class Link(Mixin, Base):
         return f'{self.url} {self.text} {self.page}'
 
 
-class Domain(Mixin, Base):
-    __tablename__ = 'search_domains'
-
-    id = Column(Integer, nullable=False, primary_key=True)
-    url = Column(Text(), nullable=False, unique=True)
-    created = Column(TIMESTAMP(timezone=True), default=datetime.utcnow)
-
-    def __repr__(self):
-        return f'{self.url}'
-
-
-class DomainsQueue(Mixin, Base):
+class SitesQueue(Mixin, Base):
     __tablename__ = 'search_domains_queue'
 
     id = Column(Integer, nullable=False, primary_key=True)

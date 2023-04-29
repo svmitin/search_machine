@@ -5,13 +5,14 @@ import sys
 import requests
 from requests.exceptions import ConnectionError, MissingSchema, InvalidSchema
 from urllib.parse import urlparse
+import hashlib
 
 import click
 from bs4 import BeautifulSoup
 from datetime import datetime
 
 from dbase import DBSession
-from dbase import Word, Page, WordsInPages, Link, Domain, DomainsQueue
+from dbase import Word, Page, WordsInPages, Link, Site, SitesQueue
 from constants import *
 from helpers import validate_word
 
@@ -117,7 +118,7 @@ class Spyder:
             return ''
 
     def make_page_index(self, page: Page, page_content: str) -> None:
-        """Indexing all words in page"""
+        """Индексируем все слова на странице. Нужно для полнотекстового поиска"""
         # конкатенируем все слова страницы, валидируем символы, преобразуем в список
         all_page_text = f'{page.title} {page.description} {page.keywords} {page_content}'.lower()
         for symbol in PUNCTUATION_SYMBOLS:
@@ -150,14 +151,23 @@ class Spyder:
         except (ConnectionError, MissingSchema, InvalidSchema) as error:
             print(f'ERROR: {error}')
             return None
-        
+
         if not title and not description and not keywords:
             print('not title or not description or not keywords')
             return None
 
-        # Сохранение базовой информации о странице: URL, описание, ключевые слова
+        # сохраняем домен как сайт
+        domain_url = f'{urlparse(url).scheme}://{urlparse(url).netloc}'
+        site = DBSession.query(Site).filter_by(url=domain_url).first()
+        if not site:
+            hash = hashlib.sha3_256(f'{domain_url}{str(datetime.now())}'.encode('utf-8')).hexdigest()
+            site = Site(url = domain_url, integration_hash = hash)
+            site.add()
+
+        # сохранение базовой информации о странице: URL, описание, ключевые слова
         soup = BeautifulSoup(response.text, 'html.parser')
         page = Page(url=url,
+                    site_id=site.id,
                     title=self.get_page_title(page_html=response.text),
                     description=self.get_page_description(page_html=response.text),
                     keywords=self.get_page_keywords(page_html=response.text),
@@ -165,14 +175,14 @@ class Spyder:
                     created=datetime.utcnow().isoformat(),
                     updated=datetime.utcnow().isoformat())
         page.add()
-        
-        # Создание индекса страницы
+
+        # создание индекса страницы
         self.make_page_index(
             page=page, 
             page_content=self.get_page_text(page_html=response.text)
         )
 
-        # save page links
+        # сохраняем ссылки страницы
         for a in soup.find_all('a'):
             url = self.normalyze_link(link=a.get('href'), parent=page.url)
             if not url:
@@ -185,13 +195,6 @@ class Spyder:
                         debug=a.get('href') # сохраняем в дебаг ссылку в изначальном виде
             )
             link.add()
-        
-        # save domain
-        domain_url = f'{urlparse(url).scheme}://{urlparse(url).netloc}'
-        domain = DBSession.query(Domain).filter_by(url=domain_url).first()
-        if not domain:
-            domain = Domain(url=domain_url)
-            domain.add()
 
     def start(self, start_url: str):
         link = Link(url=start_url) if start_url else self.open_new_url()
@@ -220,14 +223,14 @@ def run(start_url, spyder_name):
     spyder.start(start_url=start_url)
     # Бесконечный режим
     while True:
-        domains = DBSession.query(DomainsQueue).filter_by(visited=False).first()
-        if not domains:
+        sites = DBSession.query(SitesQueue).filter_by(visited=False).first()
+        if not sites:
             return
-        domain = random.choice([domain for domain in domains])
-        domain.visited = True
-        domain.spyder_name = spyder.name
-        domain.save()
-        spyder.start(start_url=domain.url)
+        site = random.choice([site for site in sites])
+        site.visited = True
+        site.spyder_name = spyder.name
+        site.save()
+        spyder.start(start_url=site.url)
 
 
 if __name__ == '__main__':

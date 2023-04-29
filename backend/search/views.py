@@ -1,6 +1,9 @@
 from datetime import datetime
 from random import choice
 import json
+import hashlib
+from urllib.parse import urlparse
+from datetime import datetime
 
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -13,7 +16,7 @@ from django.db import connection
 from django.db.models import Max
 
 from freedom.settings import DEBUG
-from .models import Word, Page, WordsInPages, Link, Domain, SearchQuery
+from .models import Word, Page, WordsInPages, Link, Site, SiteCategory, SitesQueue, SearchQuery
 
 
 class Statistics(View):
@@ -26,7 +29,7 @@ class Statistics(View):
             'Pages': Page.objects.count(),
             'WordsInPages': WordsInPages.objects.count(),
             'Links': Link.objects.count(),
-            'Domain': Domain.objects.count(),
+            'Site': Site.objects.count(),
             'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
           }, status=200)
 
@@ -132,7 +135,38 @@ class RegisterSite(View):
     def post(request) -> JsonResponse:
         """Ручная регистрация сайта в поисковой системе для индексации пользователем"""
         data = json.loads(request.body)
+        scheme, netloc, path = urlparse(data['url']).scheme, urlparse(data['url']).netloc, urlparse(data['url']).path
+        if not scheme or not netloc:
+            return JsonResponse({
+                'result': 'fail',
+                'error': 'incorrect url'
+            }, status=400)
+        
+        new_site_category = SiteCategory.objects.filter(category=data['category'])
+        if not new_site_category:
+            return JsonResponse({
+                'result': 'fail',
+                'error': 'incorrect category'
+            }, status=400)
+
+        domain = f'{scheme}://{netloc}'
+        url = f'{scheme}://{domain}{path}'
+
+        # добавляем страницу в очередь индексации
+        # это приведет к каскадной индексации страниц (если таковые давно не посещались)
+        new_page = SitesQueue.objects.filter(url = url).first()
+        if not new_page:
+            new_page = SitesQueue(url = url)
+            new_page.save()
+
+        # сохраним домен. Если он уже есть, укажем его категорию
+        new_site = Site.objects.filter(url = domain).first()
+        if not new_site:
+            hash = hashlib.sha3_256(f'{domain}{str(datetime.now())}'.encode('utf-8')).hexdigest()
+            new_site = Site(url = domain, integration_hash = hash)
+        new_site.category = new_site_category
+        new_site.save()
 
         return JsonResponse({
-            'js_integration_code': {}
+            'integration_hash': new_site.integration_hash # TODO: здесь нужно отправлять не хэш, а код интеграции на JS
         }, status=200)

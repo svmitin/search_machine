@@ -7,7 +7,7 @@ const site_url = ref('')
 const site_category = ref('')
 
 function register_site_and_get_integration_code(params) {
-  const { data } = useFetch('http://api.freedom:8000/add_site').post(
+  const { data } = useFetch('http://api.freedom:8000/register_site').post(
     {
       'site_url': site_url.value,
       'site_category': site_category.value

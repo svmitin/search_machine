@@ -3,7 +3,25 @@
 from django.contrib import admin
 from django.utils.html import mark_safe
 
-from search.models import Word, Page, WordsInPages, Link, Domain, DomainsQueue, SearchQuery
+from search.models import SiteCategory, Site, Word, Page, WordsInPages, Link, SitesQueue, SearchQuery
+
+
+@admin.register(SiteCategory)
+class SiteCategoryAdmin(admin.ModelAdmin):
+    """Admin class for SiteCategory model."""
+    list_display = ('id', 'category',)
+    list_display_links = ('id', 'category',)
+    search_fields = ('category',)
+    ordering = ('-id',)
+
+
+@admin.register(Site)
+class SiteAdmin(admin.ModelAdmin):
+    """Admin class for Site model."""
+    list_display = ('id', 'url', 'category', 'created',)
+    list_display_links = ('id', 'url',)
+    search_fields = ('url',)
+    ordering = ('-id',)
 
 
 @admin.register(Word)
@@ -42,18 +60,9 @@ class LinkAdmin(admin.ModelAdmin):
     ordering = ('-id', 'url', 'page', 'visited',)
 
 
-@admin.register(Domain)
-class DomainAdmin(admin.ModelAdmin):
-    """Admin class for Domain model."""
-    list_display = ('id', 'url', 'created',)
-    list_display_links = ('id', 'url',)
-    search_fields = ('url',)
-    ordering = ('-id',)
-
-
-@admin.register(DomainsQueue)
-class DomainsQueueAdmin(admin.ModelAdmin):
-    """Admin class for DomainsQueue model."""
+@admin.register(SitesQueue)
+class SitesQueueAdmin(admin.ModelAdmin):
+    """Admin class for SitesQueue model."""
     list_display = ('id', 'url', 'visited', 'spyder_name', 'created',)
     list_display_links = ('id', 'url',)
     search_fields = ('url',)

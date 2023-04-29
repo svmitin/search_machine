@@ -4,6 +4,37 @@ from django.contrib.postgres.fields import ArrayField
 from django.utils import timezone
 
 
+class SiteCategory(models.Model):
+    """Тематика сайта"""
+    category = models.TextField(verbose_name='Domain URL', blank=False, null=False, unique=True)
+
+    def __str__(self):
+        return f'Домен #{self.id}:{self.url}'
+    
+    class Meta:
+        db_table = "search_site_categories"
+        ordering = ['url']
+        verbose_name = 'Категория'
+        verbose_name_plural = 'Категории'
+
+
+class Site(models.Model):
+    """Домены. Для будущей аналитики и другого функционала будем сохранять все известные нам доменые имена"""
+    url = models.TextField(verbose_name='URL сайта', blank=False, null=False, unique=True)
+    category = models.ForeignKey(SiteCategory, verbose_name='Категория сайта', on_delete=models.SET_NULL, blank=True, null=True)
+    integration_hash = models.TextField(verbose_name='Хэш для интеграции метрики', blank=False, null=False, unique=True)
+    created = models.DateTimeField(verbose_name='Запись создана', default=timezone.now)
+
+    def __str__(self):
+        return f'Домен #{self.id}:{self.url}'
+    
+    class Meta:
+        db_table = "search_sites"
+        ordering = ['url']
+        verbose_name = 'Сайт'
+        verbose_name_plural = 'Все известные сайты'
+
+
 class Word(models.Model):
     """Все известные слова (используются для полнотекстового поиска)"""
     word = models.TextField(verbose_name='Word', blank=False, null=False, unique=True)
@@ -26,6 +57,7 @@ class Word(models.Model):
 
 class Page(models.Model):
     """Основная информация о страничке"""
+    site = models.ForeignKey(Site, verbose_name='Сайт страницы', on_delete=models.CASCADE, blank=False, null=False)
     url = models.TextField(verbose_name='URL', blank=False, null=False, unique=True)
     title = models.TextField(verbose_name='Заголовок')
     description = models.TextField(verbose_name='Описание')
@@ -86,22 +118,7 @@ class Link(models.Model):
         verbose_name_plural = 'Ссылки'
 
 
-class Domain(models.Model):
-    """Домены. Для будущей аналитики и другого функционала будем сохранять все известные нам доменые имена"""
-    url = models.TextField(verbose_name='Domain URL', blank=False, null=False, unique=True)
-    created = models.DateTimeField(verbose_name='Запись создана', default=timezone.now)
-
-    def __str__(self):
-        return f'Домен #{self.id}:{self.url}'
-    
-    class Meta:
-        db_table = "search_domains"
-        ordering = ['url']
-        verbose_name = 'Домен'
-        verbose_name_plural = 'Все известные домены'
-
-
-class DomainsQueue(models.Model):
+class SitesQueue(models.Model):
     """
     Очередь на индексацию. Для ручного добавления сайтов на индексацию пользователями. 
     Данная очередь имеет для краулера больший приоритет перед другими ссылками.
@@ -118,7 +135,7 @@ class DomainsQueue(models.Model):
         return f'Домен #{self.id}:{self.url}'
     
     class Meta:
-        db_table = "search_domains_queue"
+        db_table = "search_sites_queue"
         ordering = ['url']
         verbose_name = 'Домен'
         verbose_name_plural = 'Очередь на индексацию'

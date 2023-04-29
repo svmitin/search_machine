@@ -31,6 +31,7 @@
 - __spyder/__ - Сетевой краулер для обхода веб-страниц и их индексации. Написан на Python3 с использованием библиотек requests, BeautifulSoup, SQLAlchemy
 
 Схему БД можно посмотреть перейдя по ссылке [https://app.quickdatabasediagrams.com/#/d/8PAdpn](https://app.quickdatabasediagrams.com/#/d/8PAdpn)
+SWAGGER схема отсутсвует
 
 
 ## Локальный запуск с использованием Docker
