@@ -38,14 +38,14 @@ make run_spyders
 Далее нужно внести изменения в файл `/etc/hosts`:
 ```ini
 # SearchMachime
-127.0.0.1       freedom.com
+127.0.0.1       freedom
 ```
 
-Для просмотра страницы нужно открыть URL [http://freedom.com:8000/](http://freedom.com:8000/) \
-Административная панель [http://freedom.com:8000/admin](http://freedom.com:8000/admin)
+Для просмотра страницы нужно открыть URL [http://freedom:8000/](http://freedom:8000/) \
+Административная панель [http://freedom:8000/admin](http://freedom:8000/admin)
 
 **Примечания**
-* В если в файле backend/search/migrations/0001_initial.py будет изменена только дата, 
+* В если в файле `backend/search/migrations/0001_initial.py` будет изменена только дата, 
 данные изменения следует отменить
 
 ## Команды Docker
