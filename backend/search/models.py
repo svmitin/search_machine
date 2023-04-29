@@ -9,24 +9,24 @@ class SiteCategory(models.Model):
     category = models.TextField(verbose_name='Domain URL', blank=False, null=False, unique=True)
 
     def __str__(self):
-        return f'Домен #{self.id}:{self.url}'
+        return f'Категория сайта #{self.id}:{self.category}'
     
     class Meta:
         db_table = "search_site_categories"
-        ordering = ['url']
+        ordering = ['category']
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
 
 
 class Site(models.Model):
-    """Домены. Для будущей аналитики и другого функционала будем сохранять все известные нам доменые имена"""
+    """Домены сайтов. Для будущей аналитики и другого функционала будем сохранять все известные нам доменые имена"""
     url = models.TextField(verbose_name='URL сайта', blank=False, null=False, unique=True)
     category = models.ForeignKey(SiteCategory, verbose_name='Категория сайта', on_delete=models.SET_NULL, blank=True, null=True)
     integration_hash = models.TextField(verbose_name='Хэш для интеграции метрики', blank=False, null=False, unique=True)
     created = models.DateTimeField(verbose_name='Запись создана', default=timezone.now)
 
     def __str__(self):
-        return f'Домен #{self.id}:{self.url}'
+        return f'Сайт #{self.id}:{self.url}'
     
     class Meta:
         db_table = "search_sites"

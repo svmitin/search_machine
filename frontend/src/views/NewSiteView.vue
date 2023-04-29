@@ -3,6 +3,8 @@ import { ref } from 'vue'
 import { useFetch } from '@vueuse/core'
 import { RouterLink, RouterView } from 'vue-router'
 
+const { data } = useFetch('http://api.freedom:8000/get_categories').get()
+const categories = data
 const site_url = ref('')
 const site_category = ref('')
 
@@ -20,9 +22,12 @@ function register_site_and_get_integration_code(params) {
 
 <template>
   <div>
+    text: {{categories}}
     <h3>Введите URL вашего сайта</h3>
     <input v-model="site_url" @keyup.enter="register_site_and_get_integration_code()">
     <select v-model="site_category">
+      <option v-for="category in categories.categories" v-bind:value="category.id">{{category.category}}</option>
+<!-- 
       <option value="games">Игры</option>
       <option value="ad">Реклама</option>
       <option value="hobby">Хобби</option>
@@ -35,7 +40,7 @@ function register_site_and_get_integration_code(params) {
       <option value="beauty">Мода и красота</option>
       <option value="health">Здоровье</option>
       <option value="social">Общество</option>
-      <option value="shops">Магазины</option>
+      <option value="shops">Магазины</option> -->
     </select>
     <button @click="register_site_and_get_integration_code()">Добавить</button>
 

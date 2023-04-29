@@ -39,10 +39,10 @@ class StartedQuery(View):
     @staticmethod
     def get(request) -> JsonResponse:
         """Возвращает запрос по умолчанию"""
-        word = choice([word.word for word in Word.objects.all()])
+        words = [word.word for word in Word.objects.all()]
         return JsonResponse({
-            'query': word
-          }, status=200)
+            'query': choice(words) if words else 'запусти краулеров'
+        }, status=200)
 
 class Search(View):
 
@@ -128,6 +128,21 @@ class Search(View):
         return JsonResponse({
             'pages': result
         }, status=200)
+
+
+class Categories(View):
+
+    @staticmethod
+    def get(request) -> JsonResponse:
+        """Получить список категорий сайтов"""
+        result = [
+            {
+                'id': category.id,
+                'category': category.category,
+            } for category in SiteCategory.objects.all()
+        ]
+        return JsonResponse({'categories': result}, status=200)
+
 
 class RegisterSite(View):
 
