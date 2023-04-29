@@ -1,5 +1,6 @@
 from datetime import datetime
 from random import choice
+import json
 
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -28,6 +29,7 @@ class Statistics(View):
             'Domain': Domain.objects.count(),
             'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
           }, status=200)
+
 
 class StartedQuery(View):
 
@@ -122,4 +124,15 @@ class Search(View):
 
         return JsonResponse({
             'pages': result
+        }, status=200)
+
+class RegisterSite(View):
+
+    @staticmethod
+    def post(request) -> JsonResponse:
+        """Ручная регистрация сайта в поисковой системе для индексации пользователем"""
+        data = json.loads(request.body)
+
+        return JsonResponse({
+            'js_integration_code': {}
         }, status=200)

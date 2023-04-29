@@ -5,7 +5,7 @@ from django.utils import timezone
 
 
 class Word(models.Model):
-    """Words dictionary"""
+    """Все известные слова (используются для полнотекстового поиска)"""
     word = models.TextField(verbose_name='Word', blank=False, null=False, unique=True)
     created = models.DateTimeField(verbose_name='Запись создана', default=timezone.now)
 
@@ -25,7 +25,7 @@ class Word(models.Model):
 
 
 class Page(models.Model):
-    """Web-page information"""
+    """Основная информация о страничке"""
     url = models.TextField(verbose_name='URL', blank=False, null=False, unique=True)
     title = models.TextField(verbose_name='Заголовок')
     description = models.TextField(verbose_name='Описание')
@@ -45,7 +45,7 @@ class Page(models.Model):
 
 
 class WordsInPages(models.Model):
-    """For search by words"""
+    """Какие слова есть на страницах (нужно для полнотекстового поиска)"""
     words = ArrayField(ArrayField(models.IntegerField()))
     page = models.ForeignKey(Page, verbose_name='Страница', on_delete=models.CASCADE)
     created = models.DateTimeField(verbose_name='Запись создана', default=timezone.now)
@@ -62,7 +62,7 @@ class WordsInPages(models.Model):
 
 
 class Link(models.Model):
-    """Links for spyder"""
+    """Все известные ссылки. Используется сетевыми краулерами для обхода страниц"""
     url = models.TextField(verbose_name='URL', blank=False, null=False, unique=True)
     text = models.TextField(verbose_name='Текст ссылки', blank=False, null=False)
     page = models.TextField(verbose_name='Страница, на которой ссылка была встречена', blank=False, null=False)
@@ -87,7 +87,7 @@ class Link(models.Model):
 
 
 class Domain(models.Model):
-    """Домены"""
+    """Домены. Для будущей аналитики и другого функционала будем сохранять все известные нам доменые имена"""
     url = models.TextField(verbose_name='Domain URL', blank=False, null=False, unique=True)
     created = models.DateTimeField(verbose_name='Запись создана', default=timezone.now)
 
@@ -102,7 +102,13 @@ class Domain(models.Model):
 
 
 class DomainsQueue(models.Model):
-    """Очередь доменов на индексацию"""
+    """
+    Очередь на индексацию. Для ручного добавления сайтов на индексацию пользователями. 
+    Данная очередь имеет для краулера больший приоритет перед другими ссылками.
+
+    По сути краулер должен извлекать из этой таблицы URL нового сайта и ставить пометку visited.
+    Дальнейшая работа со ссылками данного сайта происходит в модели Link
+    """
     url = models.TextField(verbose_name='Domain URL', blank=False, null=False, unique=True)
     visited = models.BooleanField(verbose_name='Посещался', default=False)
     spyder_name = models.TextField(verbose_name='Имя паука', blank=True, default=None)
@@ -119,10 +125,14 @@ class DomainsQueue(models.Model):
 
 
 class SearchQuery(models.Model):
-    """Поисковые запросы"""
+    """
+    Уникальные поисковые запросы. 
+    Для каждого запроса можно создать связку с определенной страницей. Эта страница всегда будет первой в выдаче
+    """
     query = models.TextField(verbose_name='Search query', blank=False, null=False, unique=True)
     page = models.ForeignKey(Page, verbose_name='Страница', on_delete=models.CASCADE, blank=True, null=True)
     created = models.DateTimeField(verbose_name='Запись создана', default=timezone.now)
+    # TODO: возможно стоит создать таблицу, учитывающую популярность поисковых запросов для аналитики. Но пока это не нужно
 
     def __str__(self):
         return f'Поисковой запрос #{self.id}:{self.query}'
