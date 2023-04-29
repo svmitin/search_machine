@@ -3,6 +3,7 @@ install:
 	docker-compose build sm_backend
 	docker-compose up -d sm_backend
 	docker-compose exec sm_backend python3 manage.py makemigrations
+	sleep 5
 	docker-compose exec sm_backend python3 manage.py migrate
 	docker-compose exec sm_backend python3 manage.py createsuperuser
 	docker stop sm_backend
