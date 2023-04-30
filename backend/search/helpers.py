@@ -5,8 +5,6 @@ def get_site_metric_code(site_hash: str) -> str:
     # разумеется количество уникальных пользователей мы замерять не можем и не будем.
 
     # TODO: скрипт не тестировался
-    if True:
-        return '<script>'
     return f'''
     <script>
     let xhr = new XMLHttpRequest();

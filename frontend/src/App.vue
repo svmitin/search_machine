@@ -5,6 +5,7 @@ import MainView from './views/MainView.vue'
 
 <template>
   <nav>
+    <RouterLink to="/">Главная</RouterLink>
     <RouterLink to="/new_site">Добавить сайт в индекс</RouterLink>
   </nav>
   <RouterView />
