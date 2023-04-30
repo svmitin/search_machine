@@ -1,4 +1,4 @@
-# Freedom Search crawler Bot
+# Freedom Search Crawler Bot
 
 ## Getting started
 
