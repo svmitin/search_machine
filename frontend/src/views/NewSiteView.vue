@@ -4,7 +4,7 @@ import { useFetch } from '@vueuse/core'
 import { RouterLink, RouterView } from 'vue-router'
 
 const categories = useFetch('http://api.freedom:8000/get_categories').get().json().data
-const site_url = ref('http://api.freedom')
+const site_url = ref('')
 const site_category = ref('')
 </script>
 
