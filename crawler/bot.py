@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Internet spyder bot"""
+"""Internet crawler bot"""
 import random
 import sys
 import requests
@@ -17,7 +17,7 @@ from constants import *
 from helpers import validate_word
 
 
-class Spyder:
+class Crawler:
     name = ''
 
     def __init__(self, name: str):
@@ -71,7 +71,7 @@ class Spyder:
     def open_new_url(self) -> Link or None:
         link = DBSession.query(Link).filter_by(
             visited=False,
-            spyder_name=self.name
+            crawler_name=self.name
         ).first()
 
         if not link:
@@ -191,7 +191,7 @@ class Spyder:
                         text=a.text.strip().lower(),
                         page=self.normalyze_link(link=page.url, parent=page.url),
                         created=datetime.utcnow().isoformat(),
-                        spyder_name=self.name,
+                        crawler_name=self.name,
                         debug=a.get('href') # сохраняем в дебаг ссылку в изначальном виде
             )
             link.add()
@@ -217,10 +217,10 @@ class Spyder:
 
 @click.command()
 @click.option('--start_url', default=None, help='Page URL for start work')
-@click.option('--spyder_name', default='spyder_1', help='Name for spyder')
-def run(start_url, spyder_name):
-    spyder = Spyder(name=spyder_name)
-    spyder.start(start_url=start_url)
+@click.option('--crawler_name', default='crawler_1', help='Name for crawler')
+def run(start_url, crawler_name):
+    crawler = Crawler(name=crawler_name)
+    crawler.start(start_url=start_url)
     # Бесконечный режим
     while True:
         sites = DBSession.query(SitesQueue).filter_by(visited=False).first()
@@ -228,9 +228,9 @@ def run(start_url, spyder_name):
             return
         site = random.choice([site for site in sites])
         site.visited = True
-        site.spyder_name = spyder.name
+        site.crawler_name = crawler.name
         site.save()
-        spyder.start(start_url=site.url)
+        crawler.start(start_url=site.url)
 
 
 if __name__ == '__main__':

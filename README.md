@@ -29,7 +29,7 @@
     - __manage.py__ - Точка входа приложения Django. Все Django-команды выполняются через этот скрипт
 - __deploy/__ - Скрипты для развертывания проекта в Docker для нужд разработки. Возможно здесь в будущем появятся скрипты Ansible для деплоя на VPS
 - __frontend/__ - Браузерное веб-приложение. Написано на Vue.js 3 версии
-- __spyder/__ - Сетевой краулер для обхода веб-страниц и их индексации. Написан на Python3 с использованием библиотек requests, BeautifulSoup, SQLAlchemy
+- __crawler/__ - Сетевой краулер для обхода веб-страниц и их индексации. Написан на Python3 с использованием библиотек requests, BeautifulSoup, SQLAlchemy
 
 Схему БД можно посмотреть перейдя по ссылке [https://app.quickdatabasediagrams.com/#/d/8PAdpn](https://app.quickdatabasediagrams.com/#/d/8PAdpn)
 SWAGGER схема отсутсвует
@@ -44,7 +44,7 @@ SWAGGER схема отсутсвует
 ```
 make install
 make run_backend
-make run_spyders
+make run_crawlers
 ```
 
 Далее нужно внести изменения в файл `/etc/hosts`:
@@ -67,8 +67,8 @@ make remove         # Уничтожить все контейнеры. Рабо
 make down           # Завершить все контейнеры
 make run_backend    # Запускает бэкэнд приложение Django для API и Административной панели
 make stop_backend   # Завершает бэкэнд приложение Django
-make run_spyders    # Запускает 3 сетевых краулера
-make stop_spyders   # Завершает работу сетевых краулеров
+make run_crawlers   # Запускает 3 сетевых краулера
+make stop_crawlers  # Завершает работу сетевых краулеров
 make migrate        # Выполняет миграции
 make backup         # Завершает работу сетевых краулеров и создает дамп БД в файле `dump.sql`
 make admin          # Регистрирует нового администратора

@@ -88,11 +88,11 @@ services:
       - sm_nginx
       - sm_frontend
 
-  sm_spyder_1:
+  sm_crawler_1:
     build:
       context: .
       dockerfile: ./Dockerfile
-    container_name: sm_spyder_1
+    container_name: sm_crawler_1
     restart: unless-stopped
     volumes:
       - type: bind
@@ -102,8 +102,8 @@ services:
     networks:
       freedom_net:
         ipv4_address: 172.16.110.6
-    working_dir: /app/spyder
-    command: python3 bot.py --start_url=https://slovardalja.net --spyder_name=spyder_1
+    working_dir: /app/crawler
+    command: python3 bot.py --start_url=https://slovardalja.net --crawler_name=crawler_1
     environment:
       - DB_HOST=sm_postgres
       - DB_NAME=machine
@@ -113,11 +113,11 @@ services:
     depends_on:
       - sm_postgres
 
-  sm_spyder_2:
+  sm_crawler_2:
     build:
       context: .
       dockerfile: ./Dockerfile
-    container_name: sm_spyder_2
+    container_name: sm_crawler_2
     restart: unless-stopped
     volumes:
       - type: bind
@@ -127,8 +127,8 @@ services:
     networks:
       freedom_net:
         ipv4_address: 172.16.110.7
-    working_dir: /app/spyder
-    command: python3 bot.py --start_url=https://wooordhunt.ru/dic/content/ru_en --spyder_name=spyder_2
+    working_dir: /app/crawler
+    command: python3 bot.py --start_url=https://wooordhunt.ru/dic/content/ru_en --crawler_name=crawler_2
     environment:
       - DB_HOST=sm_postgres
       - DB_NAME=machine
@@ -138,11 +138,11 @@ services:
     depends_on:
       - sm_postgres
 
-  sm_spyder_3:
+  sm_crawler_3:
     build:
       context: .
       dockerfile: ./Dockerfile
-    container_name: sm_spyder_3
+    container_name: sm_crawler_3
     restart: unless-stopped
     volumes:
       - type: bind
@@ -152,8 +152,8 @@ services:
     networks:
       freedom_net:
         ipv4_address: 172.16.110.8
-    working_dir: /app/spyder
-    command: python3 bot.py --start_url=https://mail.ru --spyder_name=spyder_3
+    working_dir: /app/crawler
+    command: python3 bot.py --start_url=https://mail.ru --crawler_name=crawler_3
     environment:
       - DB_HOST=sm_postgres
       - DB_NAME=machine

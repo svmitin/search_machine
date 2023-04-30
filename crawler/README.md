@@ -1,4 +1,4 @@
-# Freedom Search Spyder Bot
+# Freedom Search Crawler Bot
 
 ## Getting started
 
@@ -20,7 +20,7 @@ Run project
 python3 -m venv venv
 source venv/bin/activate
 pip3 install -r requirements.txt
-python3 bot.py --start_url=https://petrosian.ru --spyder_name=spyder_1
+python3 bot.py --start_url=https://petrosian.ru --crawler_name=crawler_1
 ```
 
 Run tests
@@ -31,7 +31,7 @@ python test.py
 
 ### Starts with Docker
 ```
-docker-compose build spyder
+docker-compose build crawler
 docker-compose up -d
 ```
 
