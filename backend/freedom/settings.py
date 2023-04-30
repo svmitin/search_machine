@@ -16,6 +16,8 @@ ALLOWED_HOSTS = [
     'api.freedom',
 ]
 
+CSRF_TRUSTED_ORIGINS=['http://*.freedom', 'http://*.freedom:8000']
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',

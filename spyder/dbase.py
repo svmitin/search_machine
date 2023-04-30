@@ -6,7 +6,7 @@ from datetime import datetime
 import sqlalchemy
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine, MetaData
-from sqlalchemy.orm import Session, relation
+from sqlalchemy.orm import Session, relationship
 from sqlalchemy import types, Column, ForeignKey, Integer, String, Text, DateTime, Boolean
 from sqlalchemy.dialects import postgresql as dtypes
 from sqlalchemy.dialects.postgresql import UUID, TIMESTAMP
@@ -58,7 +58,7 @@ class Site(Mixin, Base):
     integration_hash = Column(Text(), nullable=False, unique=True)
     created = Column(TIMESTAMP(timezone=True), default=datetime.utcnow)
 
-    category = relation('SiteCategory', foreign_keys = [category_id])
+    category = relationship('SiteCategory', foreign_keys = [category_id])
 
     def __repr__(self):
         return f'{self.url}'
@@ -89,7 +89,7 @@ class Page(Mixin, Base):
     created = Column(TIMESTAMP(timezone=True), default=datetime.utcnow)
     updated = Column(TIMESTAMP(timezone=True), default=datetime.utcnow)
 
-    site = relation('Site', foreign_keys = [site_id])
+    site = relationship('Site', foreign_keys = [site_id])
 
     def __repr__(self):
         return self.url
