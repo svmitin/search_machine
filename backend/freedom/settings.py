@@ -15,7 +15,6 @@ ALLOWED_HOSTS = [
     'freedom',
     'api.freedom',
 ]
-CSRF_TRUSTED_ORIGINS = ['http://freedom:8000']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -31,7 +30,6 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',

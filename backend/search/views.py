@@ -16,10 +16,13 @@ from django.db import connection
 from django.db.models import Max
 
 from freedom.settings import DEBUG
-from .models import Word, Page, WordsInPages, Link, Site, SiteCategory, SitesQueue, SearchQuery
+from .models import timezone
+from .models import Word, Page, WordsInPages, Link, Site, SiteCategory, SitesQueue, SearchQuery, Metrics
+from .helpers import get_site_metric_code
 
 
 class Statistics(View):
+    '''Можно посмотреть краткую статистическую сводку'''
 
     @staticmethod
     def get(request) -> JsonResponse:
@@ -35,6 +38,7 @@ class Statistics(View):
 
 
 class StartedQuery(View):
+    '''Запрос по умолчанию. Чтобы при открытии страницы уже был пример запроса. Особенно важно при разработке'''
 
     @staticmethod
     def get(request) -> JsonResponse:
@@ -44,7 +48,9 @@ class StartedQuery(View):
             'query': choice(words) if words else 'запусти краулеров'
         }, status=200)
 
+
 class Search(View):
+    '''Поиск'''
 
     @staticmethod
     def ready_answer_search(query: str) -> list:
@@ -131,6 +137,7 @@ class Search(View):
 
 
 class Categories(View):
+    '''Категории сайтов. Нужно для регистрации нового сайта'''
 
     @staticmethod
     def get(request) -> JsonResponse:
@@ -141,10 +148,13 @@ class Categories(View):
                 'category': category.category,
             } for category in SiteCategory.objects.all()
         ]
-        return JsonResponse({'categories': result}, status=200)
+        return JsonResponse({
+            'categories': result
+        }, status=200)
 
 
 class RegisterSite(View):
+    '''Отвечает за регистрацию новых сайтов'''
 
     @staticmethod
     def post(request) -> JsonResponse:
@@ -157,7 +167,7 @@ class RegisterSite(View):
                 'error': 'incorrect url'
             }, status=400)
         
-        new_site_category = SiteCategory.objects.filter(category=data['category'])
+        new_site_category = SiteCategory.objects.filter(id=data['category']).first()
         if not new_site_category:
             return JsonResponse({
                 'result': 'fail',
@@ -183,5 +193,33 @@ class RegisterSite(View):
         new_site.save()
 
         return JsonResponse({
-            'integration_hash': new_site.integration_hash # TODO: здесь нужно отправлять не хэш, а код интеграции на JS
+            'js_metric_integration_code': get_site_metric_code(new_site.hash)
         }, status=200)
+
+
+class MetricsListener(View):
+    '''Метрика'''
+
+    @staticmethod
+    def post(request):
+        '''
+        Обрабатывает запросы JS-скрипта метрики внедренного на зарегистрированные сайты
+        Единственная информация, которая нас интересует - как долго пользователь находится на странице
+        '''
+        data = json.loads(request.body)
+        user_hash = data['user_hash']
+        site_hash = data['site_hash']
+
+        site = Site.objects.filter(site_hash=site_hash).first()
+        if not site:
+            return JsonResponse({'success': False, 'error': 'wrong site_hash'}, status=404)
+
+        # у метрики есть поля created и updated
+        # по средней разнице между ними и будем узнавать как долго пользователи находятся на сайте
+        how_long = Metrics.objects.filter(site = site, user_hash = user_hash).first()
+        if not how_long:
+            how_long = Metrics(site = site, user_hash = user_hash, created = timezone.now())
+        how_long.updated = timezone.now()
+        how_long.save()
+        
+        return JsonResponse({'success': True}, status=200)

@@ -128,7 +128,7 @@ class SitesQueue(models.Model):
     """
     url = models.TextField(verbose_name='Domain URL', blank=False, null=False, unique=True)
     visited = models.BooleanField(verbose_name='Посещался', default=False)
-    spyder_name = models.TextField(verbose_name='Имя паука', blank=True, default=None)
+    spyder_name = models.TextField(verbose_name='Имя паука', blank=True, null=True, default=None)
     created = models.DateTimeField(verbose_name='Запись создана', default=timezone.now)
 
     def __str__(self):
@@ -159,3 +159,20 @@ class SearchQuery(models.Model):
         ordering = ['query']
         verbose_name = 'Поисковой запрос'
         verbose_name_plural = 'Поисковые запросы'
+
+
+class Metrics(models.Model):
+    """Информация о том, как долго пользователь находится на странице сайта"""
+    site = models.ForeignKey(Site, verbose_name='Сайт страницы', on_delete=models.CASCADE, blank=False, null=False)
+    user_hash = models.TextField(verbose_name='Хэш пользователя')
+    created = models.DateTimeField(verbose_name='Запись создана', default=timezone.now)
+    updated = models.DateTimeField(verbose_name='Запись обновлена', default=timezone.now)
+
+    def __str__(self):
+        return f'Данные метрики #{self.id}: {self.user_hash} {self.site} '
+    
+    class Meta:
+        db_table = "search_metric"
+        ordering = ['site']
+        verbose_name = 'Метрика сайта'
+        verbose_name_plural = 'Метрики сайтов'

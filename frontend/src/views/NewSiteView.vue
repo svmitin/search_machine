@@ -3,16 +3,16 @@ import { ref } from 'vue'
 import { useFetch } from '@vueuse/core'
 import { RouterLink, RouterView } from 'vue-router'
 
-const { data } = useFetch('http://api.freedom:8000/get_categories').get()
+let { data } = useFetch('http://api.freedom:8000/get_categories').get().json()
 const categories = data
 const site_url = ref('')
 const site_category = ref('')
 
 function register_site_and_get_integration_code(params) {
-  const { data } = useFetch('http://api.freedom:8000/register_site').post(
+  let { data } = useFetch('http://api.freedom:8000/register_site').post(
     {
-      'site_url': site_url.value,
-      'site_category': site_category.value
+      'url': site_url.value,
+      'category': site_category.value
     }
   ).json()
   alert('Сайт добавлен на индексацию. Вот ваш код для интеграции на сайт. Его нужно поместить в блок HEAD каждой страницы сайта')
@@ -22,7 +22,6 @@ function register_site_and_get_integration_code(params) {
 
 <template>
   <div>
-    text: {{categories}}
     <h3>Введите URL вашего сайта</h3>
     <input v-model="site_url" @keyup.enter="register_site_and_get_integration_code()">
     <select v-model="site_category">
