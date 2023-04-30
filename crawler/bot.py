@@ -17,7 +17,7 @@ from constants import *
 from helpers import validate_word
 
 
-class crawler:
+class Crawler:
     name = ''
 
     def __init__(self, name: str):
@@ -219,7 +219,7 @@ class crawler:
 @click.option('--start_url', default=None, help='Page URL for start work')
 @click.option('--crawler_name', default='crawler_1', help='Name for crawler')
 def run(start_url, crawler_name):
-    crawler = crawler(name=crawler_name)
+    crawler = Crawler(name=crawler_name)
     crawler.start(start_url=start_url)
     # Бесконечный режим
     while True:
