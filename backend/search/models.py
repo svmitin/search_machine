@@ -9,7 +9,7 @@ class SiteCategory(models.Model):
     category = models.TextField(verbose_name='Domain URL', blank=False, null=False, unique=True)
 
     def __str__(self):
-        return f'Категория сайта #{self.id}:{self.category}'
+        return f'{self.category}'
     
     class Meta:
         db_table = "search_site_categories"
@@ -26,7 +26,7 @@ class Site(models.Model):
     created = models.DateTimeField(verbose_name='Запись создана', default=timezone.now)
 
     def __str__(self):
-        return f'Сайт #{self.id}:{self.url}'
+        return f'{self.url}'
     
     class Meta:
         db_table = "search_sites"
