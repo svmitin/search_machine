@@ -156,6 +156,20 @@ class Categories(View):
 class RegisterSite(View):
     '''Отвечает за регистрацию новых сайтов'''
 
+    @staticmethod # TODO: delete this shit
+    def get(request):
+        """debug"""
+        return JsonResponse({
+            'js_metric_integration_code': get_site_metric_code('new_site.integration_hash')
+        }, status=200)
+
+    @staticmethod # TODO: delete this shit
+    def put(request):
+        """debug"""
+        return JsonResponse({
+            'js_metric_integration_code': 'tobi pizda'
+        }, status=200)
+
     @staticmethod
     def post(request) -> JsonResponse:
         """Ручная регистрация сайта в поисковой системе для индексации пользователем"""
@@ -193,7 +207,7 @@ class RegisterSite(View):
         new_site.save()
 
         return JsonResponse({
-            'js_metric_integration_code': get_site_metric_code(new_site.hash)
+            'js_metric_integration_code': get_site_metric_code(new_site.integration_hash)
         }, status=200)
 
 

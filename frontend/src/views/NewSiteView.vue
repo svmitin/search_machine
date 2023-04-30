@@ -3,30 +3,30 @@ import { ref } from 'vue'
 import { useFetch } from '@vueuse/core'
 import { RouterLink, RouterView } from 'vue-router'
 
-let { data } = useFetch('http://api.freedom:8000/get_categories').get().json()
-const categories = data
+const categories = useFetch('http://api.freedom:8000/get_categories').get().json().data
 const site_url = ref('')
 const site_category = ref('')
+const new_metric_code = useFetch('http://api.freedom:8000/register_site').get().json().data
+new_metric_code.value = useFetch('http://api.freedom:8000/register_site').put().json().data.value
 
 function register_site_and_get_integration_code(params) {
-  let { data } = useFetch('http://api.freedom:8000/register_site').post(
+  new_metric_code.value = useFetch('http://api.freedom:8000/register_site').post(
     {
       'url': site_url.value,
       'category': site_category.value
     }
-  ).json()
-  alert('Сайт добавлен на индексацию. Вот ваш код для интеграции на сайт. Его нужно поместить в блок HEAD каждой страницы сайта')
+  ).json().data.value
 }
 
 </script>
 
 <template>
-  <div>
+  <div v-if="categories && categories.categories">
     <h3>Введите URL вашего сайта</h3>
     <input v-model="site_url" @keyup.enter="register_site_and_get_integration_code()">
     <select v-model="site_category">
       <option v-for="category in categories.categories" v-bind:value="category.id">{{category.category}}</option>
-<!-- 
+      <!-- 
       <option value="games">Игры</option>
       <option value="ad">Реклама</option>
       <option value="hobby">Хобби</option>
@@ -41,25 +41,39 @@ function register_site_and_get_integration_code(params) {
       <option value="social">Общество</option>
       <option value="shops">Магазины</option> -->
     </select>
-    <button @click="register_site_and_get_integration_code()">Добавить</button>
+    <button @click="register_site_and_get_integration_code()">Добавить</button><br><br>
 
-    <p>Ваш сайт будет добавлен в очередь на индексацию. На это может потребоваться некоторое время, но скорее 
-    всего он будет проиндексирован за один час. Когда индексация будет завершена, вы сможете найти его в поисковой выдаче.</p>
+    <div v-if="new_metric_code">
+      new_metric_code: {{new_metric_code}}<br>
+      js_metric_integration_code: {{new_metric_code.js_metric_integration_code}}<br>
+
+      <p>Сайт добавлен на индексацию. Вот ваш код для интеграции на сайт. Его нужно поместить в блок HEAD каждой страницы сайта</p>
+      <p><textarea v-model="new_metric_code.js_metric_integration_code"></textarea></p>
+    </div>
+    <div v-else>
+      <p>Ваш сайт будет добавлен в очередь на индексацию. На это может потребоваться некоторое время, но скорее 
+      всего он будет проиндексирован за один час. Когда индексация будет завершена, вы сможете найти его в поисковой выдаче.</p>
+      
+      <ol>Обратите внимание на наш алгоритм ранжирования. Чем больше пунктов вы выполните, тем выше в поисковой выдаче будет ваш сайт:
+        <li>Сайт был добавлен на индексацию в поисковую систему через эту форму</li>
+        <li>Сайт существует давно</li>
+        <li>Сайт не имеет ошибок</li>
+        <li>Сайт не имеет банов</li>
+        <li>Сайт поддерживает протокол HTTPS</li>
+        <li>Сайт подключен к метрике N1</li>
+        <li>Сайт является интересным согласно метрике N1</li>
+      </ol>
+    </div>
     
-    <ol>Обратите внимание на наш алгоритм ранжирования. Чем больше пунктов вы выполните, тем выше в поисковой выдаче будет ваш сайт:
-      <li>Сайт был добавлен на индексацию в поисковую систему через эту форму</li>
-      <li>Сайт существует давно</li>
-      <li>Сайт не имеет ошибок</li>
-      <li>Сайт не имеет банов</li>
-      <li>Сайт поддерживает протокол HTTPS</li>
-      <li>Сайт подключен к метрике N1</li>
-      <li>Сайт является интересным согласно метрике N1</li>
-    </ol>
-  </div>
+    </div>
 </template>
 
 <style scoped>
 h3 {
   font-size: 1.2rem;
+}
+textarea {
+  width: 600px;
+  height: 300px;
 }
 </style>
