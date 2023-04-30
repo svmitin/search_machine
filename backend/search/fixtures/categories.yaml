@@ -1,0 +1,52 @@
+- model: search.SiteCategory
+  pk: 1
+  fields:
+    category: Игры
+- model: search.SiteCategory
+  pk: 2
+  fields:
+    category: Реклама
+- model: search.SiteCategory
+  pk: 3
+  fields:
+    category: Хобби
+- model: search.SiteCategory
+  pk: 4
+  fields:
+    category: Музыка
+- model: search.SiteCategory
+  pk: 5
+  fields:
+    category: Фидео и фильмы
+- model: search.SiteCategory
+  pk: 6
+  fields:
+    category: 18+
+- model: search.SiteCategory
+  pk: 7
+  fields:
+    category: Автомобили
+- model: search.SiteCategory
+  pk: 8
+  fields:
+    category: Блоги
+- model: search.SiteCategory
+  pk: 9
+  fields:
+    category: Новости
+- model: search.SiteCategory
+  pk: 10
+  fields:
+    category: Мода и красота
+- model: search.SiteCategory
+  pk: 11
+  fields:
+    category: Здоровье
+- model: search.SiteCategory
+  pk: 12
+  fields:
+    category: Общество
+- model: search.SiteCategory
+  pk: 13
+  fields:
+    category: Магазины

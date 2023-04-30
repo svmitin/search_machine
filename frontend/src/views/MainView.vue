@@ -9,12 +9,12 @@ const started_query = data
 </script>
 
 <template>
-    <div class="wrapper" v-if="started_query && started_query.query">
-      <Query 
-        message="Введи поисковой запрос" 
-        :search_text="started_query.query" 
-      />
-    </div>
+  <div class="wrapper" v-if="started_query && started_query.query">
+    <Query 
+      message="Введи поисковой запрос" 
+      :search_text="started_query.query" 
+    />
+  </div>
 </template>
 
 <style scoped>
