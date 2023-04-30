@@ -116,7 +116,7 @@ class Link(Mixin, Base):
     page = Column(Text(), nullable=False, unique=True)          # Страница, на которой ссылка была встречена
     visited = Column(Boolean, default=False)
     created = Column(TIMESTAMP(timezone=True), default=datetime.utcnow)
-    spyder_name = Column(Text(), default='spyder_1')
+    crawler_name = Column(Text(), default='crawler_1')
     debug = Column(Text(), default=False)
 
     def __repr__(self):
@@ -129,7 +129,7 @@ class SitesQueue(Mixin, Base):
     id = Column(Integer, nullable=False, primary_key=True)
     url = Column(Text(), nullable=False, unique=True)
     visited = Column(Boolean, default=False)
-    spyder_name = Column(Text(), nullable=True, default=None)
+    crawler_name = Column(Text(), nullable=True, default=None)
     created = Column(TIMESTAMP(timezone=True), default=datetime.utcnow)
 
     def __repr__(self):
