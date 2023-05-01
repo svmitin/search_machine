@@ -11,9 +11,12 @@ import MainView from './views/MainView.vue'
   <RouterView />
 
   <br><br><br>
-  <hr width="250px">
+  <hr>
   Sergey Mitin © 2023
 </template>
 
 <style scoped>
+hr {
+  width: 250px;
+}
 </style>
