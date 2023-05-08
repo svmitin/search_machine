@@ -56,10 +56,6 @@ make run_crawlers
 Для просмотра страницы нужно открыть URL [http://freedom:8000/](http://freedom:8000/) \
 Административная панель [http://freedom:8000/admin](http://freedom:8000/admin)
 
-**Примечания**
-* В если в файле `backend/search/migrations/0001_initial.py` будет изменена только дата, 
-данные изменения следует отменить
-
 ## Команды Docker
 ```bash
 make install        # Подготовить окружение
