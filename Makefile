@@ -2,11 +2,11 @@ install:
 	docker-compose down
 	docker-compose build sm_backend
 	docker-compose up -d sm_backend
-	docker-compose exec sm_backend python3 manage.py makemigrations
+	docker-compose exec sm_backend /venv/bin/python3 manage.py makemigrations
 	sleep 5
-	docker-compose exec sm_backend python3 manage.py migrate
-	docker-compose exec sm_backend python3 manage.py createsuperuser
-	docker-compose exec sm_backend python3 manage.py loaddata /app/backend/search/fixtures/categories.yaml
+	docker-compose exec sm_backend /venv/bin/python3 manage.py migrate
+	docker-compose exec sm_backend /venv/bin/python3 manage.py createsuperuser
+	docker-compose exec sm_backend /venv/bin/python3 manage.py loaddata /app/backend/search/fixtures/categories.yaml
 	docker stop sm_backend
 	docker stop sm_postgres
 	docker stop sm_nginx
@@ -28,7 +28,7 @@ remove:
 	-docker rmi sm_postgres:13
 	-docker rmi sm_nginx:latest
 
-	rm backend/search/migrations/0*.py
+	-rm backend/search/migrations/0*.py
 
 down:
 	-docker stop sm_crawler_1
@@ -38,7 +38,7 @@ down:
 	-docker stop sm_postgres
 	-docker stop sm_nginx
 
-run_backend:
+x:
 	docker-compose up -d sm_backend
 
 stop_backend:
@@ -57,8 +57,8 @@ stop_crawlers:
 
 migrate:
 	docker-compose up -d sm_backend
-	docker-compose exec sm_backend python3 manage.py makemigrations
-	docker-compose exec sm_backend python3 manage.py migrate
+	docker-compose exec sm_backend /venv/bin/python3 manage.py makemigrations
+	docker-compose exec sm_backend /venv/bin/python3 manage.py migrate
 
 backup:
 	docker-compose up -d sm_backend
@@ -69,7 +69,7 @@ backup:
 
 admin:
 	docker-compose up -d sm_backend
-	docker-compose exec sm_backend python3 manage.py createsuperuser
+	docker-compose exec sm_backend /venv/bin/python3 manage.py createsuperuser
 
 psql:
 	docker-compose exec sm_postgres psql -U django -b freedom

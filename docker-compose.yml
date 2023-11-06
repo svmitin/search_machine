@@ -75,7 +75,7 @@ services:
       freedom_net:
         ipv4_address: 172.16.110.5
     working_dir: /app/backend
-    command: python3 manage.py runserver 172.16.110.5:80
+    command: /venv/bin/python3 manage.py runserver 172.16.110.5:80
     environment:
       - DEBUG=True
       - DB_HOST=sm_postgres
@@ -103,7 +103,7 @@ services:
       freedom_net:
         ipv4_address: 172.16.110.6
     working_dir: /app/crawler
-    command: python3 bot.py --start_url=https://slovardalja.net --crawler_name=crawler_1
+    command: /venv/bin/python3 bot.py --start_url=https://slovardalja.net --crawler_name=crawler_1
     environment:
       - DB_HOST=sm_postgres
       - DB_NAME=machine
@@ -128,7 +128,7 @@ services:
       freedom_net:
         ipv4_address: 172.16.110.7
     working_dir: /app/crawler
-    command: python3 bot.py --start_url=https://wooordhunt.ru/dic/content/ru_en --crawler_name=crawler_2
+    command: /venv/bin/python3 bot.py --start_url=https://wooordhunt.ru/dic/content/ru_en --crawler_name=crawler_2
     environment:
       - DB_HOST=sm_postgres
       - DB_NAME=machine
@@ -153,7 +153,7 @@ services:
       freedom_net:
         ipv4_address: 172.16.110.8
     working_dir: /app/crawler
-    command: python3 bot.py --start_url=https://mail.ru --crawler_name=crawler_3
+    command: /venv/bin/python3 bot.py --start_url=https://mail.ru --crawler_name=crawler_3
     environment:
       - DB_HOST=sm_postgres
       - DB_NAME=machine
