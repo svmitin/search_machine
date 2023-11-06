@@ -4,7 +4,7 @@ SHELL ["/bin/bash", "-c"]
 
 ENV LANG en_US.UTF-8
 RUN apt -q update && \
-    apt install -y software-properties-common locales apt-utils iputils-ping nmap htop i2pd yggdrasil && \
+    apt install -y software-properties-common locales apt-utils iputils-ping nmap htop i2pd yggdrasil wget && \
     locale-gen en_US.UTF-8 && \
     add-apt-repository ppa:deadsnakes/ppa && \
     apt install -y --no-install-recommends python3.11 python3-pip python3.11-venv nodejs npm && \

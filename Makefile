@@ -38,7 +38,7 @@ down:
 	-docker stop sm_postgres
 	-docker stop sm_nginx
 
-x:
+run_backend:
 	docker-compose up -d sm_backend
 
 stop_backend:
