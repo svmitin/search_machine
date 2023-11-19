@@ -99,6 +99,7 @@ class Search(View):
     def get(request) -> HttpResponse:
         """Возвращает страницу результатов"""
         query = request.GET.get('query', '').lower().strip()
+        page_num = int(request.GET.get("page", "1"))
 
         # сохраним запрос в историю
         search_query = SearchQuery.objects.filter(query=query).first()
@@ -115,10 +116,22 @@ class Search(View):
             *links_search_results,
             *full_text_search_results
         ]
-    
+
+        p = Paginator(results, 10)
+        last_page = int(len(results) / 10) + 1
+        page_num = page_num if page_num <= last_page else last_page
+        results_on_current_page = p.page(page_num)
+        pagination = {
+            'previous': 1 if page_num == 1 else results_on_current_page.previous_page_number(),
+            'active_page': int(page_num),
+            'next': last_page if page_num == p.num_pages else results_on_current_page.next_page_number(),
+            'pages_list': [i for i in range(1, p.num_pages + 1)]
+        }
+
         context = {
             'query': request.GET.get('query', ''),
-            'results': results
+            'results': results_on_current_page,
+            'pagination': pagination
         }
         return render(request, 'search/results.html', context=context)
 

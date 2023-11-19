@@ -1,6 +1,13 @@
 from constants import *
 
 
+def in_blacklist(url):
+    for domain in DOMAIN_BLACKLIST:
+        if domain in url:
+            return True
+    return False
+
+
 def validate_word(word: str) -> bool:
     if len(word) < 3:           # сразу нахуй
         return False

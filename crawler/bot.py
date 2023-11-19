@@ -12,7 +12,7 @@ from datetime import datetime
 from dbase import DBSession
 from dbase import Word, Page, WordsInPages, Link, Site, SitesQueue
 from constants import *
-from helpers import validate_word
+from helpers import in_blacklist, validate_word
 
 
 class Crawler:
@@ -208,9 +208,9 @@ class Crawler:
                 continue
 
             # Домен не должен быть включен в черный список
-            if urlparse(url).netloc in DOMAIN_BLACKLIST:
+            if in_blacklist(url):
                 continue
-                
+
             self.parse_page(url=url)
         print('Очередь URL пуста')
 
