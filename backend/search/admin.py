@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Core application admin module."""
 from django.contrib import admin
 from django.utils.html import mark_safe

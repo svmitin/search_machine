@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Инициализация библиотеки по работе с бд"""
 import os
 from datetime import datetime
@@ -124,7 +123,7 @@ class Link(Mixin, Base):
 
 
 class SitesQueue(Mixin, Base):
-    __tablename__ = 'search_domains_queue'
+    __tablename__ = 'search_sites_queue'
 
     id = Column(Integer, nullable=False, primary_key=True)
     url = Column(Text(), nullable=False, unique=True)

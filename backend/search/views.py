@@ -34,31 +34,6 @@ class MainPage(View):
         return render(request, 'search/index.html', context = context)
 
 
-class ResultsPage(View):
-    '''Главная страница'''
-
-    @staticmethod
-    def get(request) -> HttpResponse:
-        """Возвращает страницу результатов"""
-        return render(request, 'search/results.html')
-
-
-class Statistics(View):
-    '''Можно посмотреть краткую статистическую сводку'''
-
-    @staticmethod
-    def get(request) -> JsonResponse:
-        """Возвращает статистику"""
-        return JsonResponse({
-            'Words': Word.objects.count(),
-            'Pages': Page.objects.count(),
-            'WordsInPages': WordsInPages.objects.count(),
-            'Links': Link.objects.count(),
-            'Site': Site.objects.count(),
-            'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-          }, status=200)
-
-
 class Search(View):
     '''Поиск'''
 
@@ -146,6 +121,23 @@ class Search(View):
             'results': results
         }
         return render(request, 'search/results.html', context=context)
+
+
+class Statistics(View):
+    '''Можно посмотреть краткую статистическую сводку'''
+
+    @staticmethod
+    def get(request) -> HttpResponse:
+        """Возвращает статистику"""
+        context = {
+            'Words': Word.objects.count(),
+            'Pages': Page.objects.count(),
+            'WordsInPages': WordsInPages.objects.count(),
+            'Links': Link.objects.count(),
+            'Site': Site.objects.count(),
+            'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+          }
+        return render(request, 'search/statistics.html', context = context)
 
 
 class Categories(View):

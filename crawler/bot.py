@@ -1,7 +1,5 @@
-# -*- coding: utf-8 -*-
 """Internet crawler bot"""
 import random
-import sys
 import requests
 from requests.exceptions import ConnectionError, MissingSchema, InvalidSchema
 from urllib.parse import urlparse
@@ -75,7 +73,7 @@ class Crawler:
         ).first()
 
         if not link:
-            return None
+            return
         
         link.visited = True
         link.save()
@@ -144,17 +142,17 @@ class Crawler:
         try:
             response = requests.get(url)
             status_code = response.status_code
-            print(f'Get page: {status_code} {url}')
+            print(f'Get page: {datetime.now().strftime("%H:%M:%S")} {status_code} {url}')
             title=self.get_page_title(page_html=response.text)
             description=self.get_page_description(page_html=response.text)
             keywords=self.get_page_keywords(page_html=response.text)
         except (ConnectionError, MissingSchema, InvalidSchema) as error:
             print(f'ERROR: {error}')
-            return None
+            return
 
         if not title and not description and not keywords:
             print('not title or not description or not keywords')
-            return None
+            return
 
         # сохраняем домен как сайт
         domain_url = f'{urlparse(url).scheme}://{urlparse(url).netloc}'
@@ -199,20 +197,21 @@ class Crawler:
     def start(self, start_url: str):
         link = Link(url=start_url) if start_url else self.open_new_url()
         while link:
+            url = link.url
+            link = self.open_new_url()
             # Проверка доменной зоны. Ходим только в .RU
             try:
-                zone = urlparse(link.url).netloc.split('.')[-1]
+                zone = urlparse(url).netloc.split('.')[-1]
             except KeyError:
                 continue
             if zone not in ACCEPTED_ZONES:
                 continue
 
             # Домен не должен быть включен в черный список
-            if urlparse(link.url).netloc in DOMAIN_BLACKLIST:
+            if urlparse(url).netloc in DOMAIN_BLACKLIST:
                 continue
                 
-            self.parse_page(url=link.url)
-            link = self.open_new_url()
+            self.parse_page(url=url)
         print('Очередь URL пуста')
 
 @click.command()
@@ -221,12 +220,11 @@ class Crawler:
 def run(start_url, crawler_name):
     crawler = Crawler(name=crawler_name)
     crawler.start(start_url=start_url)
-    # Бесконечный режим
+    # перезапуск краулера с сайтом, в ручную добавленным на индексацию
     while True:
-        sites = DBSession.query(SitesQueue).filter_by(visited=False).first()
-        if not sites:
+        site = DBSession.query(SitesQueue).filter_by(visited=False).first()
+        if not site:
             return
-        site = random.choice([site for site in sites])
         site.visited = True
         site.crawler_name = crawler.name
         site.save()

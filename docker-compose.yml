@@ -81,7 +81,7 @@ services:
       freedom_net:
         ipv4_address: 172.16.110.6
     working_dir: /app/crawler
-    command: /venv/bin/python3 bot.py --start_url=https://www.omgtu.ru/ --crawler_name=crawler_1
+    command: /venv/bin/python3 bot.py --start_url=https://omfil.ru/ --crawler_name=crawler_1
     environment:
       - DB_HOST=sm_postgres
       - DB_NAME=machine

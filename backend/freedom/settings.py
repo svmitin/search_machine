@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """WEB-application configuration"""
 import os
 from pathlib import Path
