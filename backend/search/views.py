@@ -30,6 +30,8 @@ class MainPage(View):
         words = [word.word for word in Word.objects.all()]
         context = {
             'query': choice(words) if words else 'Краулеры еще не запускались',
+            'description': 'Freedom - свободная поисковая система',
+            'keywords': 'Freedom, search, search machine, поисковая система, поиск, найти',
         }
         return render(request, 'search/index.html', context = context)
 

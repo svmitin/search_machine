@@ -6,6 +6,8 @@
     <title>Freedom search</title>
     <link rel="stylesheet" href="/static/css/style.css">
     <link rel="icon" type="image/x-icon" href="/static/favicon.png">
+    {% if description %}<meta name="description" content="{{ description }}">{% endif %}
+    {% if keywords %}<meta name="keywords" content="{{ keywords }}">{% endif %}
 </head>
 <body>
     {% block body %}
