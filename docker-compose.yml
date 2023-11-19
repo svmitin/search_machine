@@ -39,27 +39,6 @@ services:
     ports:
       - 8000:80
   
-  sm_frontend:
-    build:
-      context: .
-      dockerfile: ./Dockerfile
-    container_name: sm_frontend
-    volumes:
-      - type: bind
-        source: ./
-        target: /app
-      - ./docker/bashrc:/root/.bashrc
-    networks:
-      freedom_net:
-        ipv4_address: 172.16.110.4
-    working_dir: /app/frontend
-    command: /bin/bash /app/docker/init_frontend
-    environment:
-      - DB_HOST=sm_postgres
-      - DB_NAME=machine
-      - DB_USER=user
-      - DB_PASS=pass
-  
   sm_backend:
     build:
       context: .
@@ -86,7 +65,6 @@ services:
     depends_on:
       - sm_postgres
       - sm_nginx
-      - sm_frontend
 
   sm_crawler_1:
     build:
@@ -103,7 +81,7 @@ services:
       freedom_net:
         ipv4_address: 172.16.110.6
     working_dir: /app/crawler
-    command: /venv/bin/python3 bot.py --start_url=https://slovardalja.net --crawler_name=crawler_1
+    command: /venv/bin/python3 bot.py --start_url=https://www.omgtu.ru/ --crawler_name=crawler_1
     environment:
       - DB_HOST=sm_postgres
       - DB_NAME=machine
@@ -128,7 +106,7 @@ services:
       freedom_net:
         ipv4_address: 172.16.110.7
     working_dir: /app/crawler
-    command: /venv/bin/python3 bot.py --start_url=https://wooordhunt.ru/dic/content/ru_en --crawler_name=crawler_2
+    command: /venv/bin/python3 bot.py --start_url=https://www.rambler.ru/ --crawler_name=crawler_2
     environment:
       - DB_HOST=sm_postgres
       - DB_NAME=machine

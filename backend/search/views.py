@@ -21,6 +21,28 @@ from .models import Word, Page, WordsInPages, Link, Site, SiteCategory, SitesQue
 from .helpers import get_site_metric_code
 
 
+class MainPage(View):
+    '''Главная страница'''
+
+    @staticmethod
+    def get(request) -> HttpResponse:
+        """Возвращает главную страницу"""
+        words = [word.word for word in Word.objects.all()]
+        context = {
+            'query': choice(words) if words else 'Краулеры еще не запускались',
+        }
+        return render(request, 'search/index.html', context = context)
+
+
+class ResultsPage(View):
+    '''Главная страница'''
+
+    @staticmethod
+    def get(request) -> HttpResponse:
+        """Возвращает страницу результатов"""
+        return render(request, 'search/results.html')
+
+
 class Statistics(View):
     '''Можно посмотреть краткую статистическую сводку'''
 
@@ -35,18 +57,6 @@ class Statistics(View):
             'Site': Site.objects.count(),
             'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
           }, status=200)
-
-
-class StartedQuery(View):
-    '''Запрос по умолчанию. Чтобы при открытии страницы уже был пример запроса. Особенно важно при разработке'''
-
-    @staticmethod
-    def get(request) -> JsonResponse:
-        """Возвращает запрос по умолчанию"""
-        words = [word.word for word in Word.objects.all()]
-        return JsonResponse({
-            'query': choice(words) if words else 'запусти краулеров'
-        }, status=200)
 
 
 class Search(View):
@@ -111,8 +121,8 @@ class Search(View):
         ]
 
     @staticmethod
-    def get(request) -> JsonResponse:
-        """Отвечает за поиск"""
+    def get(request) -> HttpResponse:
+        """Возвращает страницу результатов"""
         query = request.GET.get('query', '').lower().strip()
 
         # сохраним запрос в историю
@@ -125,15 +135,17 @@ class Search(View):
         links_search_results = Search.links_search(query = query)
         full_text_search_results = Search.full_text_search(query = query)
 
-        result = [
+        results = [
             *ready_answer_search_results,
             *links_search_results,
             *full_text_search_results
         ]
-
-        return JsonResponse({
-            'pages': result
-        }, status=200)
+    
+        context = {
+            'query': request.GET.get('query', ''),
+            'results': results
+        }
+        return render(request, 'search/results.html', context=context)
 
 
 class Categories(View):

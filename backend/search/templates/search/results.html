@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block body %}
+    <div class="search-container results-page">
+        <h1><a href="/">Freedom search</a></h1>
+        <form action="/search" method="get">
+            <input type="text" name="query" placeholder="Введите запрос..." value="{{query}}">
+            <button type="submit">Поиск</button>
+        </form>
+        <div class="search-results">
+            {% if results %}
+            {% for result in results %}
+            <div class="search-result">
+                <h2><a href="{{result.url}}" target="_blank">{{result.title}}</a></h2>
+                <p class="result-url"><a href="{{result.url}}">{{result.url}}</a></p>
+                <p>{{result.description}}</p>
+            </div>
+            {% endfor %}
+            {% else %}
+            <h2>Ничего не найдено</h2>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

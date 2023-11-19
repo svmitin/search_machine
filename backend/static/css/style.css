@@ -1,0 +1,94 @@
+/* Общие стили */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+    color: #333;
+  }
+
+  a {
+    text-decoration: none;
+    color: #357abd;
+  }
+  
+  footer {
+    text-align: center;
+    background-color: #f0f0f0;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+  }
+  
+  /* Стили для страницы поиска */
+  .search-container {
+    text-align: center;
+    padding-top: 20%;
+  }
+  
+  .search-container h1 {
+    color: #333;
+  }
+  
+  .search-container form {
+    margin-top: 20px;
+  }
+  
+  .search-container input[type="text"] {
+    padding: 10px;
+    width: 300px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+  .search-container button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #4a90e2;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .search-container button:hover {
+    background-color: #357abd;
+  }
+  
+  /* Стили для страницы результатов */
+  .results-page {
+    padding-top: 50px;
+  }
+  
+  .search-results {
+    margin-top: 20px;
+    padding: 0 10%;
+    padding-bottom: 100px
+  }
+  
+  .search-results div {
+    text-align: left;
+    background-color: #fff;
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+  .search-results h2 {
+    margin: 0 0 5px 0;
+    font-weight: bold;
+  }
+  
+  .search-results .result-url {
+    color: #06c;
+    font-size: 0.9em;
+    margin: 0 0 10px 0;
+  }
+  
+  /* Адаптивность */
+  @media (max-width: 600px) {
+    .search-container input[type="text"] {
+        width: 80%;
+    }
+  }
+  
