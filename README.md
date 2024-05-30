@@ -67,6 +67,8 @@ make df             # Проверить расход памяти
 
 ```bash
 apt-get update && apt-get upgrade -y && apt-get install -y python3 python3-venv postgresql i2pd
+service i2pd start
+sudo -i -u postgres
 createuser search_user
 createdb machine -O search_user
 psql
@@ -74,7 +76,7 @@ ALTER USER search_user WITH ENCRYPTED PASSWORD 'TpEaWwb(TA_[zSL@a2';
 \q
 exit
 
-ssh-agent bash -c 'ssh-add /root/.ssh/id_rsa.github; git clone git@github.com:svmitin/search_machine.git'cd search_machine
+git clone git@github.com:svmitin/search_machine.git
 cd search_machine
 python3 -m venv venv
 source venv/bin/activate

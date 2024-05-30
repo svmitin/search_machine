@@ -140,7 +140,7 @@ class Crawler:
 
     def parse_page(self, url: str) -> None:
         try:
-            response = requests.get(url)
+            response = requests.get(url, proxies={'http': 'socks5:127.0.0.1:4447'})
             status_code = response.status_code
             print(f'Get page: {datetime.now().strftime("%H:%M:%S")} {status_code} {url}')
             title=self.get_page_title(page_html=response.text)
