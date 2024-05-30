@@ -75,9 +75,8 @@ class Search(View):
         # 2) находим id каждого слова
         # 3) извлекаем из WordsInPages все страницы на которых есть все эти слова
         # 4) извлекаем из Page информацию о данных страницах для возврата пользователю
-        query = query.split()
         words_ids = []
-        for word in query:
+        for word in query.split():
             word = Word.objects.filter(word=word.lower()).first()
             if not word:
                 continue
