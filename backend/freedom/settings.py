@@ -13,6 +13,8 @@ ALLOWED_HOSTS = [
     '0.0.0.0',
     'freedom',
     'api.freedom',
+    'nmhkvf3bzxzn5hbyvxq2q7b26esawuidikkvdxp4gkur3xxlourq.b32.i2p',
+    'freedom.i2p',
 ]
 
 CSRF_TRUSTED_ORIGINS=['http://*.freedom', 'http://*.freedom:8000']
