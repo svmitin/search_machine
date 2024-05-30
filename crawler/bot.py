@@ -140,7 +140,8 @@ class Crawler:
 
     def parse_page(self, url: str) -> None:
         try:
-            response = requests.get(url, proxies={'http': 'socks5:127.0.0.1:4447'})
+            print(url)
+            response = requests.get(url, proxies={'http': 'socks5h://127.0.0.1:4447'})
             status_code = response.status_code
             print(f'Get page: {datetime.now().strftime("%H:%M:%S")} {status_code} {url}')
             title=self.get_page_title(page_html=response.text)
@@ -164,14 +165,16 @@ class Crawler:
 
         # сохранение базовой информации о странице: URL, описание, ключевые слова
         soup = BeautifulSoup(response.text, 'html.parser')
-        page = Page(url=url,
-                    site_id=site.id,
-                    title=self.get_page_title(page_html=response.text),
-                    description=self.get_page_description(page_html=response.text),
-                    keywords=self.get_page_keywords(page_html=response.text),
-                    status_code=status_code,
-                    created=datetime.utcnow().isoformat(),
-                    updated=datetime.utcnow().isoformat())
+        page = Page(
+            url=url,
+            site_id=site.id,
+            title=self.get_page_title(page_html=response.text),
+            description=self.get_page_description(page_html=response.text),
+            keywords=self.get_page_keywords(page_html=response.text),
+            status_code=status_code,
+            created=datetime.utcnow().isoformat(),
+            updated=datetime.utcnow().isoformat()
+        )
         page.add()
 
         # создание индекса страницы
@@ -197,21 +200,28 @@ class Crawler:
     def start(self, start_url: str):
         link = Link(url=start_url) if start_url else self.open_new_url()
         while link:
+            save = True
+
             url = link.url
-            link = self.open_new_url()
+            print(f'url: {url}')
             # Проверка доменной зоны. Ходим только в .RU
             try:
                 zone = urlparse(url).netloc.split('.')[-1]
             except KeyError:
-                continue
+                save = False
             if zone not in ACCEPTED_ZONES:
-                continue
+                save = False
 
             # Домен не должен быть включен в черный список
             if in_blacklist(url):
-                continue
+                save = False
 
-            self.parse_page(url=url)
+            if save:
+                self.parse_page(url=url)
+
+            link = self.open_new_url()
+            if not link:
+                break
         print('Очередь URL пуста')
 
 @click.command()
