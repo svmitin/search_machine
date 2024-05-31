@@ -6,7 +6,6 @@ install:
 	sleep 5
 	docker-compose exec sm_backend /venv/bin/python3 manage.py migrate
 	docker-compose exec sm_backend /venv/bin/python3 manage.py createsuperuser
-	docker-compose exec sm_backend /venv/bin/python3 manage.py loaddata /app/backend/search/fixtures/categories.yaml
 	docker stop sm_backend
 	docker stop sm_postgres
 	docker stop sm_nginx

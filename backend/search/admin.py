@@ -2,16 +2,7 @@
 from django.contrib import admin
 from django.utils.html import mark_safe
 
-from search.models import SiteCategory, Site, Word, Page, WordsInPages, Link, SitesQueue, SearchQuery
-
-
-@admin.register(SiteCategory)
-class SiteCategoryAdmin(admin.ModelAdmin):
-    """Admin class for SiteCategory model."""
-    list_display = ('id', 'category',)
-    list_display_links = ('id', 'category',)
-    search_fields = ('category',)
-    ordering = ('-id',)
+from search.models import Site, Word, Page, WordsInPages, Link, SitesQueue, SearchQuery
 
 
 @admin.register(Site)

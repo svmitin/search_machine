@@ -3,24 +3,9 @@ from django.contrib.postgres.fields import ArrayField
 from django.utils import timezone
 
 
-class SiteCategory(models.Model):
-    """Тематика сайта"""
-    category = models.TextField(verbose_name='Domain URL', blank=False, null=False, unique=True)
-
-    def __str__(self):
-        return f'{self.category}'
-    
-    class Meta:
-        db_table = "search_site_categories"
-        ordering = ['category']
-        verbose_name = 'Категория'
-        verbose_name_plural = 'Категории'
-
-
 class Site(models.Model):
     """Домены сайтов. Для будущей аналитики и другого функционала будем сохранять все известные нам доменые имена"""
     url = models.TextField(verbose_name='URL сайта', blank=False, null=False, unique=True)
-    category = models.ForeignKey(SiteCategory, verbose_name='Категория сайта', on_delete=models.SET_NULL, blank=True, null=True)
     integration_hash = models.TextField(verbose_name='Хэш для интеграции метрики', blank=False, null=False, unique=True)
     created = models.DateTimeField(verbose_name='Запись создана', default=timezone.now)
 
@@ -158,20 +143,3 @@ class SearchQuery(models.Model):
         ordering = ['query']
         verbose_name = 'Поисковой запрос'
         verbose_name_plural = 'Поисковые запросы'
-
-
-class Metrics(models.Model):
-    """Информация о том, как долго пользователь находится на странице сайта"""
-    site = models.ForeignKey(Site, verbose_name='Сайт страницы', on_delete=models.CASCADE, blank=False, null=False)
-    user_hash = models.TextField(verbose_name='Хэш пользователя')
-    created = models.DateTimeField(verbose_name='Запись создана', default=timezone.now)
-    updated = models.DateTimeField(verbose_name='Запись обновлена', default=timezone.now)
-
-    def __str__(self):
-        return f'Данные метрики #{self.id}: {self.user_hash} {self.site} '
-    
-    class Meta:
-        db_table = "search_metric"
-        ordering = ['site']
-        verbose_name = 'Метрика сайта'
-        verbose_name_plural = 'Метрики сайтов'

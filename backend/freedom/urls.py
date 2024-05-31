@@ -5,7 +5,7 @@ from django.contrib.staticfiles.urls import static
 
 from freedom import settings
 from search.views import MainPage
-from search.views import Statistics, Search, RegisterSite, Categories, MetricsListener
+from search.views import Statistics, Search
 
 
 admin.autodiscover()
@@ -16,7 +16,4 @@ urlpatterns = [
     path('', MainPage.as_view(), name='main'),
     path('search', Search.as_view(), name='search'),
     path('statistics', Statistics.as_view(), name='statistics'),
-    path('register_site', RegisterSite.as_view(), name='register_site'),
-    path('get_categories', Categories.as_view(), name='get_categories'),
-    path('metrics', MetricsListener.as_view(), name='metrics'),
 ]

@@ -35,29 +35,14 @@ class Mixin():
             DBSession.refresh(self)
 
 
-# Описание таблиц
-class SiteCategory(Mixin, Base):
-    """Тематика сайта"""
-    __tablename__ = 'search_site_categories'
-
-    id = Column(Integer, nullable=False, primary_key=True)
-    category = Column(Text(), nullable=False, unique=True)
-
-    def __repr__(self):
-        return f'{self.category}'
-
-
 class Site(Mixin, Base):
     """Домены. Для будущей аналитики и другого функционала будем сохранять все известные нам доменые имена"""
     __tablename__ = 'search_sites'
 
     id = Column(Integer, nullable=False, primary_key=True)
     url = Column(Text(), nullable=False, unique=True)
-    category_id = Column(types.Integer, ForeignKey('search_site_categories.id', ondelete='SET NULL'), nullable = True, comment = 'Категория сайта')
     integration_hash = Column(Text(), nullable=False, unique=True)
     created = Column(TIMESTAMP(timezone=True), default=datetime.utcnow)
-
-    category = relationship('SiteCategory', foreign_keys = [category_id])
 
     def __repr__(self):
         return f'{self.url}'
