@@ -84,7 +84,6 @@ class Link(models.Model):
     page = models.TextField(verbose_name='Страница, на которой ссылка была встречена', blank=False, null=False)
     visited = models.BooleanField(verbose_name='Посещалась', default=False)
     created = models.DateTimeField(verbose_name='Запись создана', default=timezone.now)
-    crawler_name = models.TextField(verbose_name='Имя паука', default='crawler_1')
     debug = models.TextField(verbose_name='Ссылка в изначальном виде', blank=True, null=True)  # TODO: отладочное поле. Удалить
 
     # TODO: создать уникальную связку. Позволять дублирование. Или нет?
@@ -112,7 +111,6 @@ class SitesQueue(models.Model):
     """
     url = models.TextField(verbose_name='Domain URL', blank=False, null=False, unique=True)
     visited = models.BooleanField(verbose_name='Посещался', default=False)
-    crawler_name = models.TextField(verbose_name='Имя паука', blank=True, null=True, default=None)
     created = models.DateTimeField(verbose_name='Запись создана', default=timezone.now)
 
     def __str__(self):

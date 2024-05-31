@@ -20,7 +20,7 @@ After=network.target
 [Service]
 User=root
 WorkingDirectory={WORK_DIR}
-ExecStart={WORK_DIR}/venv/bin/python3 {WORK_DIR}/crawler/bot.py --start_url=https://i2pd.i2p --crawler_name=crawler_1
+ExecStart={WORK_DIR}/venv/bin/python3 {WORK_DIR}/crawler/bot.py --start_url=https://i2pd.i2p
 Restart=always
 RestartSec=3
 

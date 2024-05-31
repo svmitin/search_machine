@@ -81,7 +81,7 @@ services:
       freedom_net:
         ipv4_address: 172.16.110.6
     working_dir: /app/crawler
-    command: /venv/bin/python3 bot.py --start_url=https://omfil.ru/ --crawler_name=crawler_1
+    command: /venv/bin/python3 bot.py --start_url=https://omfil.ru/
     environment:
       - DB_HOST=sm_postgres
       - DB_NAME=machine
@@ -91,56 +91,6 @@ services:
     depends_on:
       - sm_postgres
 
-  sm_crawler_2:
-    build:
-      context: .
-      dockerfile: ./Dockerfile
-    container_name: sm_crawler_2
-    restart: unless-stopped
-    volumes:
-      - type: bind
-        source: ./
-        target: /app
-      - ./docker/bashrc:/root/.bashrc
-    networks:
-      freedom_net:
-        ipv4_address: 172.16.110.7
-    working_dir: /app/crawler
-    command: /venv/bin/python3 bot.py --start_url=https://www.rambler.ru/ --crawler_name=crawler_2
-    environment:
-      - DB_HOST=sm_postgres
-      - DB_NAME=machine
-      - DB_USER=user
-      - DB_PASS=pass
-      - DB_PORT=5432
-    depends_on:
-      - sm_postgres
-
-  sm_crawler_3:
-    build:
-      context: .
-      dockerfile: ./Dockerfile
-    container_name: sm_crawler_3
-    restart: unless-stopped
-    volumes:
-      - type: bind
-        source: ./
-        target: /app
-      - ./docker/bashrc:/root/.bashrc
-    networks:
-      freedom_net:
-        ipv4_address: 172.16.110.8
-    working_dir: /app/crawler
-    command: /venv/bin/python3 bot.py --start_url=https://mail.ru --crawler_name=crawler_3
-    environment:
-      - DB_HOST=sm_postgres
-      - DB_NAME=machine
-      - DB_USER=user
-      - DB_PASS=pass
-      - DB_PORT=5432
-    depends_on:
-      - sm_postgres
-  
   sm_i2pd:
     image: purplei2p/i2pd
     container_name: sm_i2pd

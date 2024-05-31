@@ -1,4 +1,4 @@
-"""Internet crawler bot"""
+"""i2p crawler bot"""
 import random
 import requests
 from requests.exceptions import ConnectionError, MissingSchema, InvalidSchema
@@ -16,10 +16,10 @@ from helpers import in_blacklist, validate_word
 
 
 class Crawler:
-    name = ''
+    candidates = None
 
-    def __init__(self, name: str):
-        self.name = name
+    def __init__(self):
+        self.candidates = []
 
     def normalyze_link(self, link: str, parent: str) -> str or None:
         """Получает URL ссылки, URL её владельца, возвращает нормализованную глобальную ссылку"""
@@ -38,7 +38,7 @@ class Crawler:
         scheme, domain = urlparse(link).scheme, urlparse(link).netloc
         if not scheme or not domain:
             # на случай не полной ссылки вроде /about и т.п.
-            link = f'{urlparse(parent).scheme}://{urlparse(parent).netloc}/{link.lstrip("/")}'
+            link = f'http://{urlparse(parent).netloc}/{link.lstrip("/")}'
         return link
 
     def link_type(self, link: str) -> str:
@@ -67,11 +67,35 @@ class Crawler:
         return 'page'
 
     def open_new_url(self) -> Link or None:
-        link = DBSession.query(Link).filter_by(
-            visited=False,
-            crawler_name=self.name
-        ).first()
+        if not self.candidates:
+            # новые. Первичная индексация. Достаем 100 самых старых
+            links_for_index = DBSession.query(
+                Link
+            ).filter_by(
+                Link.visited.is_(False)
+            ).order_by(
+                Link.created.desc()
+            ).all()[100]
 
+            # Посещенные. Повторная индексация. Достаем 100 самых старых
+            pages_urls_for_reindex = [row.url for row in DBSession.query(
+                Page
+            ).order_by(
+                Page.updated.desc()
+            ).all()[100]]
+
+            links_for_reindex = DBSession.query(
+                Link
+            ).filter_by(
+                Link.visited.is_(True),
+                Link.url.in_(pages_urls_for_reindex)
+            ).order_by(
+                Link.created.desc()
+            ).all()[100]
+
+            self.candidates = [] + links_for_index + links_for_reindex
+
+        link = random.choice(self.candidates)
         if not link:
             return
         
@@ -80,7 +104,7 @@ class Crawler:
         return link
 
     def get_page_title(self, page_html: str) -> str:
-        """Parse page, search description"""
+        """Parse page, search title"""
         try:
             soup = BeautifulSoup(page_html, 'html.parser')
             return soup.title.string
@@ -96,7 +120,7 @@ class Crawler:
             return ''
 
     def get_page_keywords(self, page_html: str) -> str:
-        """Parse page, search description"""
+        """Parse page, search keywords"""
         try:
             soup = BeautifulSoup(page_html, 'html.parser')
             return soup.find("meta", attrs={"name": "keywords"})['content']
@@ -140,7 +164,6 @@ class Crawler:
 
     def parse_page(self, url: str) -> None:
         try:
-            print(url)
             response = requests.get(url, proxies={'http': 'socks5h://127.0.0.1:4447'})
             status_code = response.status_code
             print(f'Get page: {datetime.now().strftime("%H:%M:%S")} {status_code} {url}')
@@ -192,7 +215,6 @@ class Crawler:
                         text=a.text.strip().lower(),
                         page=self.normalyze_link(link=page.url, parent=page.url),
                         created=datetime.utcnow().isoformat(),
-                        crawler_name=self.name,
                         debug=a.get('href') # сохраняем в дебаг ссылку в изначальном виде
             )
             link.add()
@@ -226,9 +248,8 @@ class Crawler:
 
 @click.command()
 @click.option('--start_url', default=None, help='Page URL for start work')
-@click.option('--crawler_name', default='crawler_1', help='Name for crawler')
-def run(start_url, crawler_name):
-    crawler = Crawler(name=crawler_name)
+def run(start_url):
+    crawler = Crawler()
     crawler.start(start_url=start_url)
     # перезапуск краулера с сайтом, в ручную добавленным на индексацию
     while True:
@@ -236,7 +257,6 @@ def run(start_url, crawler_name):
         if not site:
             return
         site.visited = True
-        site.crawler_name = crawler.name
         site.save()
         crawler.start(start_url=site.url)
 

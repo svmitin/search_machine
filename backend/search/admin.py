@@ -53,7 +53,7 @@ class LinkAdmin(admin.ModelAdmin):
 @admin.register(SitesQueue)
 class SitesQueueAdmin(admin.ModelAdmin):
     """Admin class for SitesQueue model."""
-    list_display = ('id', 'url', 'visited', 'crawler_name', 'created',)
+    list_display = ('id', 'url', 'visited', 'created',)
     list_display_links = ('id', 'url',)
     search_fields = ('url',)
     ordering = ('-id',)
