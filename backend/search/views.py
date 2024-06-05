@@ -17,36 +17,22 @@ from django.db.models import Max
 
 from freedom.settings import DEBUG
 from .models import timezone
-from .models import Word, Page, WordsInPages, Link, Site, SiteCategory, SitesQueue, SearchQuery, Metrics
-from .helpers import get_site_metric_code
+from .models import Word, Page, WordsInPages, Link, Site, SitesQueue, SearchQuery
 
 
-class Statistics(View):
-    '''Можно посмотреть краткую статистическую сводку'''
-
-    @staticmethod
-    def get(request) -> JsonResponse:
-        """Возвращает статистику"""
-        return JsonResponse({
-            'Words': Word.objects.count(),
-            'Pages': Page.objects.count(),
-            'WordsInPages': WordsInPages.objects.count(),
-            'Links': Link.objects.count(),
-            'Site': Site.objects.count(),
-            'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-          }, status=200)
-
-
-class StartedQuery(View):
-    '''Запрос по умолчанию. Чтобы при открытии страницы уже был пример запроса. Особенно важно при разработке'''
+class MainPage(View):
+    '''Главная страница'''
 
     @staticmethod
-    def get(request) -> JsonResponse:
-        """Возвращает запрос по умолчанию"""
+    def get(request) -> HttpResponse:
+        """Возвращает главную страницу"""
         words = [word.word for word in Word.objects.all()]
-        return JsonResponse({
-            'query': choice(words) if words else 'запусти краулеров'
-        }, status=200)
+        context = {
+            'query': choice(words) if words else 'Краулеры еще не запускались',
+            'description': 'Freedom - свободная поисковая система',
+            'keywords': 'Freedom, search, search machine, поисковая система, поиск, найти',
+        }
+        return render(request, 'search/index.html', context = context)
 
 
 class Search(View):
@@ -88,9 +74,8 @@ class Search(View):
         # 2) находим id каждого слова
         # 3) извлекаем из WordsInPages все страницы на которых есть все эти слова
         # 4) извлекаем из Page информацию о данных страницах для возврата пользователю
-        query = query.split()
         words_ids = []
-        for word in query:
+        for word in query.split():
             word = Word.objects.filter(word=word.lower()).first()
             if not word:
                 continue
@@ -111,9 +96,10 @@ class Search(View):
         ]
 
     @staticmethod
-    def get(request) -> JsonResponse:
-        """Отвечает за поиск"""
+    def get(request) -> HttpResponse:
+        """Возвращает страницу результатов"""
         query = request.GET.get('query', '').lower().strip()
+        page_num = int(request.GET.get("page", "1"))
 
         # сохраним запрос в историю
         search_query = SearchQuery.objects.filter(query=query).first()
@@ -125,101 +111,43 @@ class Search(View):
         links_search_results = Search.links_search(query = query)
         full_text_search_results = Search.full_text_search(query = query)
 
-        result = [
+        results = [
             *ready_answer_search_results,
             *links_search_results,
             *full_text_search_results
         ]
 
-        return JsonResponse({
-            'pages': result
-        }, status=200)
+        p = Paginator(results, 10)
+        last_page = int(len(results) / 10) + 1
+        page_num = page_num if page_num <= last_page else last_page
+        results_on_current_page = p.page(page_num)
+        pagination = {
+            'previous': 1 if page_num == 1 else results_on_current_page.previous_page_number(),
+            'active_page': int(page_num),
+            'next': last_page if page_num == p.num_pages else results_on_current_page.next_page_number(),
+            'pages_list': [i for i in range(1, p.num_pages + 1)]
+        }
+
+        context = {
+            'query': request.GET.get('query', ''),
+            'results': results_on_current_page,
+            'pagination': pagination
+        }
+        return render(request, 'search/results.html', context=context)
 
 
-class Categories(View):
-    '''Категории сайтов. Нужно для регистрации нового сайта'''
-
-    @staticmethod
-    def get(request) -> JsonResponse:
-        """Получить список категорий сайтов"""
-        result = [
-            {
-                'id': category.id,
-                'category': category.category,
-            } for category in SiteCategory.objects.all()
-        ]
-        return JsonResponse({
-            'categories': result
-        }, status=200)
-
-
-class RegisterSite(View):
-    '''Отвечает за регистрацию новых сайтов'''
+class Statistics(View):
+    '''Можно посмотреть краткую статистическую сводку'''
 
     @staticmethod
-    def post(request) -> JsonResponse:
-        """Ручная регистрация сайта в поисковой системе для индексации пользователем"""
-        data = json.loads(request.body)
-        scheme, netloc, path = urlparse(data['url']).scheme, urlparse(data['url']).netloc, urlparse(data['url']).path
-        if not scheme or not netloc:
-            return JsonResponse({
-                'result': 'fail',
-                'error': 'incorrect url'
-            }, status=400)
-        
-        new_site_category = SiteCategory.objects.filter(id=int(data['category'])).first()
-        if not new_site_category:
-            return JsonResponse({
-                'result': 'fail',
-                'error': 'incorrect category'
-            }, status=400)
-
-        domain = f'{scheme}://{netloc}'
-        url = f'{scheme}://{domain}{path}'
-
-        # добавляем страницу в очередь индексации
-        # это приведет к каскадной индексации страниц (если таковые давно не посещались)
-        new_page = SitesQueue.objects.filter(url = url).first()
-        if not new_page:
-            new_page = SitesQueue(url = url)
-            new_page.save()
-
-        # сохраним домен. Если он уже есть, укажем его категорию
-        new_site = Site.objects.filter(url = domain).first()
-        if not new_site:
-            hash = hashlib.sha3_256(f'{domain}{str(datetime.now())}'.encode('utf-8')).hexdigest()
-            new_site = Site(url = domain, integration_hash = hash)
-        new_site.category = new_site_category
-        new_site.save()
-
-        return JsonResponse({
-            'js_metric_integration_code': get_site_metric_code(new_site.integration_hash)
-        }, status=200)
-
-
-class MetricsListener(View):
-    '''Метрика'''
-
-    @staticmethod
-    def post(request):
-        '''
-        Обрабатывает запросы JS-скрипта метрики внедренного на зарегистрированные сайты
-        Единственная информация, которая нас интересует - как долго пользователь находится на странице
-        '''
-        data = json.loads(request.body)
-        user_hash = data['user_hash']
-        site_hash = data['site_hash']
-
-        site = Site.objects.filter(site_hash=site_hash).first()
-        if not site:
-            return JsonResponse({'success': False, 'error': 'wrong site_hash'}, status=404)
-
-        # у метрики есть поля created и updated
-        # по средней разнице между ними и будем узнавать как долго пользователи находятся на сайте
-        how_long = Metrics.objects.filter(site = site, user_hash = user_hash).first()
-        if not how_long:
-            how_long = Metrics(site = site, user_hash = user_hash, created = timezone.now())
-        how_long.updated = timezone.now()
-        how_long.save()
-        
-        return JsonResponse({'success': True}, status=200)
+    def get(request) -> HttpResponse:
+        """Возвращает статистику"""
+        context = {
+            'Words': Word.objects.count(),
+            'Pages': Page.objects.count(),
+            'WordsInPages': WordsInPages.objects.count(),
+            'Links': Link.objects.count(),
+            'Site': Site.objects.count(),
+            'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+          }
+        return render(request, 'search/statistics.html', context = context)

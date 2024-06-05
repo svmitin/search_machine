@@ -6,7 +6,6 @@ install:
 	sleep 5
 	docker-compose exec sm_backend /venv/bin/python3 manage.py migrate
 	docker-compose exec sm_backend /venv/bin/python3 manage.py createsuperuser
-	docker-compose exec sm_backend /venv/bin/python3 manage.py loaddata /app/backend/search/fixtures/categories.yaml
 	docker stop sm_backend
 	docker stop sm_postgres
 	docker stop sm_nginx
@@ -24,7 +23,6 @@ remove:
 	-docker rmi sm_crawler_2:latest
 	-docker rmi sm_crawler_3:latest
 	-docker rmi search_machine_sm_backend:latest
-	-docker rmi sm_frontend:latest
 	-docker rmi sm_postgres:13
 	-docker rmi sm_nginx:latest
 
@@ -38,12 +36,11 @@ down:
 	-docker stop sm_postgres
 	-docker stop sm_nginx
 
-x:
+run_backend:
 	docker-compose up -d sm_backend
 
 stop_backend:
 	docker-compose stop sm_backend
-	docker-compose stop sm_frontend
 
 run_crawlers:
 	docker-compose up -d sm_crawler_1

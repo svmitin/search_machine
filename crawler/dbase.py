@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Инициализация библиотеки по работе с бд"""
 import os
 from datetime import datetime
@@ -36,29 +35,14 @@ class Mixin():
             DBSession.refresh(self)
 
 
-# Описание таблиц
-class SiteCategory(Mixin, Base):
-    """Тематика сайта"""
-    __tablename__ = 'search_site_categories'
-
-    id = Column(Integer, nullable=False, primary_key=True)
-    category = Column(Text(), nullable=False, unique=True)
-
-    def __repr__(self):
-        return f'{self.category}'
-
-
 class Site(Mixin, Base):
     """Домены. Для будущей аналитики и другого функционала будем сохранять все известные нам доменые имена"""
     __tablename__ = 'search_sites'
 
     id = Column(Integer, nullable=False, primary_key=True)
     url = Column(Text(), nullable=False, unique=True)
-    category_id = Column(types.Integer, ForeignKey('search_site_categories.id', ondelete='SET NULL'), nullable = True, comment = 'Категория сайта')
     integration_hash = Column(Text(), nullable=False, unique=True)
     created = Column(TIMESTAMP(timezone=True), default=datetime.utcnow)
-
-    category = relationship('SiteCategory', foreign_keys = [category_id])
 
     def __repr__(self):
         return f'{self.url}'
@@ -116,7 +100,6 @@ class Link(Mixin, Base):
     page = Column(Text(), nullable=False, unique=True)          # Страница, на которой ссылка была встречена
     visited = Column(Boolean, default=False)
     created = Column(TIMESTAMP(timezone=True), default=datetime.utcnow)
-    crawler_name = Column(Text(), default='crawler_1')
     debug = Column(Text(), default=False)
 
     def __repr__(self):
@@ -124,12 +107,11 @@ class Link(Mixin, Base):
 
 
 class SitesQueue(Mixin, Base):
-    __tablename__ = 'search_domains_queue'
+    __tablename__ = 'search_sites_queue'
 
     id = Column(Integer, nullable=False, primary_key=True)
     url = Column(Text(), nullable=False, unique=True)
     visited = Column(Boolean, default=False)
-    crawler_name = Column(Text(), nullable=True, default=None)
     created = Column(TIMESTAMP(timezone=True), default=datetime.utcnow)
 
     def __repr__(self):

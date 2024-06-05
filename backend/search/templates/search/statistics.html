@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block body %}
+    <div class="search-container results-page">
+        <h1><a href="/">Freedom search</a></h1>
+        <form action="/search" method="get">
+            <input type="text" name="query" placeholder="Введите запрос..." value="{{query}}">
+            <button type="submit">Поиск</button>
+        </form>
+        <div class="statistics">
+            <b>Слов</b>: {{Words}} (<i>Все известные слова (для полнотекстового поиска)</i>)<br>
+            <b>Страниц</b>: {{Pages}} (<i>Проиндексировано страниц</i>)<br>
+            <b>Слов на страницах</b>: {{WordsInPages}} (<i>Связка между Словами и Страницами</i>)<br>
+            <b>Ссылок</b>: {{Links}} (<i>Все известные ссылки. Используется сетевыми краулерами для обхода страниц</i>)<br>
+            <b>Сайтов</b>: {{Site}} (<i>Домены сайтов. Для будущей аналитики и другого функционала будем сохранять все известные нам доменые имена</i>)<br><br>
+            <b>timestamp</b>: {{timestamp}} UTC<br>
+        </div>
+    </div>
+{% endblock %}

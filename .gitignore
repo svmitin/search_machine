@@ -123,3 +123,4 @@ pnpm-debug.log*
 
 # Project files
 dump.sql
+backend/search/migrations/

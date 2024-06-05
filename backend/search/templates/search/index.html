@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block body %}
+    <div class="search-container">
+        <h1><a href="/">Freedom search</a></h1>
+        <form action="/search" method="get">
+            <input type="text" name="query" placeholder="Введите запрос..." value="{{query}}">
+            <button type="submit">Поиск</button>
+        </form>
+    </div>
+{% endblock %}

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """WEB-application configuration"""
 import os
 from pathlib import Path
@@ -14,6 +13,8 @@ ALLOWED_HOSTS = [
     '0.0.0.0',
     'freedom',
     'api.freedom',
+    'nmhkvf3bzxzn5hbyvxq2q7b26esawuidikkvdxp4gkur3xxlourq.b32.i2p',
+    'freedom.i2p',
 ]
 
 CSRF_TRUSTED_ORIGINS=['http://*.freedom', 'http://*.freedom:8000']
@@ -42,7 +43,7 @@ ROOT_URLCONF = 'freedom.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -74,6 +75,10 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
+
+STATIC_URL = '/static/'
+STATIC_DIR = os.path.join(BASE_DIR, 'static')
+STATICFILES_DIRS = [STATIC_DIR]
 
 LANGUAGE_CODE = 'ru-ru'
 TIME_ZONE = 'UTC'
