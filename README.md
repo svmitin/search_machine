@@ -21,7 +21,7 @@
 - __docker/__ - Скрипты развертывания проекта в Docker для нужд разработки
 - __crawler/__ - Сетевой краулер для обхода веб-страниц и их индексации. Написан на Python3 с использованием библиотек requests, BeautifulSoup, SQLAlchemy
 
-Схему БД можно посмотреть перейдя по ссылке [https://app.quickdatabasediagrams.com/#/d/8PAdpn](https://app.quickdatabasediagrams.com/#/d/8PAdpn)
+Схему БД можно посмотреть перейдя по ссылке [https://app.quickdatabasediagrams.com/#/d/RmBShw](https://app.quickdatabasediagrams.com/#/d/RmBShw)
 SWAGGER схема отсутсвует
 
 
